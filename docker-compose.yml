@@ -1,0 +1,25 @@
+version: '3.1'
+
+services:
+  fwe-diary-db:
+    image: postgres:latest
+    restart: always
+    environment:
+      
+      POSTGRES_DB: diary_database
+      POSTGRES_USER: diary_db_user
+      POSTGRES_PASSWORD: securePassword123!
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'diary_db_user', '-d', 'diary_database']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - fwe-diary-db-data:/var/lib/postgresql/data
+
+volumes:
+  fwe-diary-db-data:
+    driver: local
+
