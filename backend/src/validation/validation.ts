@@ -1,26 +1,9 @@
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
-import { user } from '../database/schema/user.schema';
 import { DI } from '../dependency-injection';
 import { diaryEntry } from '../database/schema/diary-entry.schema';
 
-export const selectUserZodSchema = createSelectSchema(user);
-export const createUserZodSchema = createInsertSchema(user, {
-  email: z.string().email(),
-  password: z.string().min(8),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-}).transform(async (data) => {
-  return {
-    ...data,
-    password: await DI.utils.passwordHasher.hashPassword(data.password),
-  };
-});
-export const loginZodSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
 export const createDiaryEntryZodSchema = createInsertSchema(diaryEntry, {
   title: z.string().min(1),
   content: z.string().min(1),
@@ -53,7 +36,5 @@ export const updateDiaryEntryZodSchema = createInsertSchema(diaryEntry, {
   content: true,
 });
 
-export type DbUser = z.infer<typeof selectUserZodSchema>;
-export type CreateUser = z.infer<typeof createUserZodSchema>;
 export type CreateDiaryEntry = z.infer<typeof createDiaryEntryZodSchema>;
 export type UpdateDiaryEntry = z.infer<typeof updateDiaryEntryZodSchema>;

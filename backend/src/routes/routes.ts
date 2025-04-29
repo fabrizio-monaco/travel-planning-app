@@ -1,6 +1,5 @@
 import { Router } from 'express';
 
-import { AuthController } from '../controller/auth.controller';
 import { DiaryEntryController } from '../controller/diary-entry.controller';
 import { HealthController } from '../controller/health.controller';
 import { TagController } from '../controller/tag.controller';
@@ -10,7 +9,6 @@ export class Routes {
   private router: Router;
 
   constructor(
-    private readonly authController: AuthController,
     private readonly healthController: HealthController,
     private readonly tagController: TagController,
     private readonly diaryEntryController: DiaryEntryController,
@@ -24,16 +22,6 @@ export class Routes {
    * ?.bind(this.authController.) ensures that 'this' inside the controller method refers to the controller instance rather than Express's context
    */
   private initializeRoutes(): void {
-    // Auth routes
-    this.router.post(
-      '/auth/register',
-      this.authController.registerUser.bind(this.authController),
-    );
-    this.router.post(
-      '/auth/login',
-      this.authController.loginUser.bind(this.authController),
-    );
-
     // Health routes
     this.router.get(
       '/health',
