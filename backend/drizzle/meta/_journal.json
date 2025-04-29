@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1730542044375,
-      "tag": "0000_magical_brood",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1730542706208,
-      "tag": "0001_living_vargas",
+      "when": 1745757010733,
+      "tag": "0000_clear_energizer",
       "breakpoints": true
     }
   ]
