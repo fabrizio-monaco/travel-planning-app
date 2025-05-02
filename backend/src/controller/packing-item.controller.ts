@@ -15,8 +15,11 @@ export class PackingItemController {
 
   async getAllPackingItems(req: Request, res: Response): Promise<void> {
     try {
+      // Check if withRelations query parameter is present
+      const withRelations = req.query.withRelations === 'true';
+
       const packingItems =
-        await this.packingItemRepository.getAllPackingItems();
+        await this.packingItemRepository.getAllPackingItems(withRelations);
       res.send(packingItems);
     } catch (error) {
       console.error('Error retrieving packing items:', error);
@@ -27,6 +30,9 @@ export class PackingItemController {
   async getPackingItemById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
+      // Check if withRelations query parameter is present
+      const withRelations = req.query.withRelations === 'true';
+
       const validatedId = z
         .string()
         .uuid({
@@ -46,6 +52,7 @@ export class PackingItemController {
 
       const packingItem = await this.packingItemRepository.getPackingItemById(
         validatedId.data,
+        withRelations,
       );
 
       if (!packingItem) {
@@ -63,6 +70,9 @@ export class PackingItemController {
   async getPackingItemsByTripId(req: Request, res: Response): Promise<void> {
     try {
       const { tripId } = req.params;
+      // Check if withRelations query parameter is present
+      const withRelations = req.query.withRelations === 'true';
+
       const validatedId = z
         .string()
         .uuid({
@@ -87,6 +97,7 @@ export class PackingItemController {
       const packingItems =
         await this.packingItemRepository.getPackingItemsByTripId(
           validatedId.data,
+          withRelations,
         );
       res.send(packingItems);
     } catch (error) {

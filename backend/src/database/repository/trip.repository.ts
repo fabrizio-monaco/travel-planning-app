@@ -16,6 +16,7 @@ export class TripRepository {
               destination: true,
             },
           },
+          packingItems: true,
         },
       });
     } else {
@@ -33,6 +34,7 @@ export class TripRepository {
               destination: true,
             },
           },
+          packingItems: true,
         },
       });
     } else {
@@ -127,6 +129,7 @@ export class TripRepository {
               destination: true,
             },
           },
+          packingItems: true,
         },
       });
     } else {
@@ -150,6 +153,7 @@ export class TripRepository {
                 destination: true,
               },
             },
+            packingItems: true,
           },
         })
         .then((trips) =>

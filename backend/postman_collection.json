@@ -552,16 +552,23 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/packing-items",
+							"raw": "{{baseUrl}}/api/packing-items?withRelations=false",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"packing-items"
+							],
+							"query": [
+								{
+									"key": "withRelations",
+									"value": "false",
+									"description": "Set to 'true' to include trip data"
+								}
 							]
 						},
-						"description": "Retrieves a list of all packing items across all trips."
+						"description": "Retrieves a list of all packing items across all trips. Use the withRelations query parameter to include or exclude trip data."
 					},
 					"response": []
 				},
@@ -571,7 +578,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/packing-items/:id",
+							"raw": "{{baseUrl}}/api/packing-items/:id?withRelations=false",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -579,6 +586,13 @@
 								"api",
 								"packing-items",
 								":id"
+							],
+							"query": [
+								{
+									"key": "withRelations",
+									"value": "false",
+									"description": "Set to 'true' to include trip data"
+								}
 							],
 							"variable": [
 								{
@@ -588,7 +602,7 @@
 								}
 							]
 						},
-						"description": "Retrieves a specific packing item by its ID."
+						"description": "Retrieves a specific packing item by its ID. Use the withRelations query parameter to include or exclude trip data."
 					},
 					"response": []
 				},
@@ -689,7 +703,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/trips/:tripId/packing-items",
+							"raw": "{{baseUrl}}/api/trips/:tripId/packing-items?withRelations=false",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -699,6 +713,13 @@
 								":tripId",
 								"packing-items"
 							],
+							"query": [
+								{
+									"key": "withRelations",
+									"value": "false",
+									"description": "Set to 'true' to include trip data"
+								}
+							],
 							"variable": [
 								{
 									"key": "tripId",
@@ -707,7 +728,7 @@
 								}
 							]
 						},
-						"description": "Retrieves all packing items associated with a specific trip"
+						"description": "Retrieves all packing items associated with a specific trip. Use the withRelations query parameter to include or exclude trip data."
 					},
 					"response": []
 				},

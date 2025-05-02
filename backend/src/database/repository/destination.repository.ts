@@ -11,7 +11,11 @@ export class DestinationRepository {
         with: {
           tripToDestinations: {
             with: {
-              trip: true,
+              trip: {
+                with: {
+                  packingItems: true,
+                },
+              },
             },
           },
         },
@@ -31,7 +35,11 @@ export class DestinationRepository {
         with: {
           tripToDestinations: {
             with: {
-              trip: true,
+              trip: {
+                with: {
+                  packingItems: true,
+                },
+              },
             },
           },
         },
