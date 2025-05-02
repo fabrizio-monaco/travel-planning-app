@@ -15,7 +15,8 @@ export class PackingItemController {
 
   async getAllPackingItems(req: Request, res: Response): Promise<void> {
     try {
-      const packingItems = await this.packingItemRepository.getAllPackingItems();
+      const packingItems =
+        await this.packingItemRepository.getAllPackingItems();
       res.send(packingItems);
     } catch (error) {
       console.error('Error retrieving packing items:', error);
@@ -29,13 +30,16 @@ export class PackingItemController {
       const validatedId = z
         .string()
         .uuid({
-          message: 'Invalid packing item id format. Please provide a valid UUID.',
+          message:
+            'Invalid packing item id format. Please provide a valid UUID.',
         })
         .safeParse(id);
 
       if (!validatedId.success) {
         res.status(400).json({
-          errors: ['Invalid packing item id format. Please provide a valid UUID.'],
+          errors: [
+            'Invalid packing item id format. Please provide a valid UUID.',
+          ],
         });
         return;
       }
@@ -80,9 +84,10 @@ export class PackingItemController {
         return;
       }
 
-      const packingItems = await this.packingItemRepository.getPackingItemsByTripId(
-        validatedId.data,
-      );
+      const packingItems =
+        await this.packingItemRepository.getPackingItemsByTripId(
+          validatedId.data,
+        );
       res.send(packingItems);
     } catch (error) {
       console.error('Error retrieving packing items for trip:', error);
@@ -95,20 +100,24 @@ export class PackingItemController {
       const validation = createPackingItemZodSchema.safeParse(req.body);
 
       if (!validation.success) {
-        res.status(400).json({ 
-          errors: validation.error.errors.map((e) => e.message) 
+        res.status(400).json({
+          errors: validation.error.errors.map((e) => e.message),
         });
         return;
       }
 
       // Verify that trip exists
-      const trip = await this.tripRepository.getTripById(validation.data.tripId);
+      const trip = await this.tripRepository.getTripById(
+        validation.data.tripId,
+      );
       if (!trip) {
         res.status(404).json({ errors: ['Trip not found'] });
         return;
       }
 
-      const packingItem = await this.packingItemRepository.createPackingItem(validation.data);
+      const packingItem = await this.packingItemRepository.createPackingItem(
+        validation.data,
+      );
       res.status(201).send(packingItem);
     } catch (error) {
       console.error('Error creating packing item:', error);
@@ -122,13 +131,16 @@ export class PackingItemController {
       const validatedId = z
         .string()
         .uuid({
-          message: 'Invalid packing item id format. Please provide a valid UUID.',
+          message:
+            'Invalid packing item id format. Please provide a valid UUID.',
         })
         .safeParse(id);
 
       if (!validatedId.success) {
         res.status(400).json({
-          errors: ['Invalid packing item id format. Please provide a valid UUID.'],
+          errors: [
+            'Invalid packing item id format. Please provide a valid UUID.',
+          ],
         });
         return;
       }
@@ -146,15 +158,17 @@ export class PackingItemController {
       const validation = updatePackingItemZodSchema.safeParse(req.body);
 
       if (!validation.success) {
-        res.status(400).json({ 
-          errors: validation.error.errors.map((e) => e.message) 
+        res.status(400).json({
+          errors: validation.error.errors.map((e) => e.message),
         });
         return;
       }
 
       // If tripId is provided, verify that trip exists
       if (validation.data.tripId) {
-        const trip = await this.tripRepository.getTripById(validation.data.tripId);
+        const trip = await this.tripRepository.getTripById(
+          validation.data.tripId,
+        );
         if (!trip) {
           res.status(404).json({ errors: ['Trip not found'] });
           return;
@@ -178,13 +192,16 @@ export class PackingItemController {
       const validatedId = z
         .string()
         .uuid({
-          message: 'Invalid packing item id format. Please provide a valid UUID.',
+          message:
+            'Invalid packing item id format. Please provide a valid UUID.',
         })
         .safeParse(id);
 
       if (!validatedId.success) {
         res.status(400).json({
-          errors: ['Invalid packing item id format. Please provide a valid UUID.'],
+          errors: [
+            'Invalid packing item id format. Please provide a valid UUID.',
+          ],
         });
         return;
       }
@@ -230,7 +247,9 @@ export class PackingItemController {
         return;
       }
 
-      await this.packingItemRepository.deletePackingItemsByTripId(validatedId.data);
+      await this.packingItemRepository.deletePackingItemsByTripId(
+        validatedId.data,
+      );
       res.status(204).send({});
     } catch (error) {
       console.error('Error deleting packing items for trip:', error);

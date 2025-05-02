@@ -22,7 +22,10 @@ export class PackingItemRepository {
   }
 
   async createPackingItem(data: any) {
-    const [item] = await this.database.insert(packingItems).values(data).returning();
+    const [item] = await this.database
+      .insert(packingItems)
+      .values(data)
+      .returning();
     return item;
   }
 
@@ -36,10 +39,14 @@ export class PackingItemRepository {
   }
 
   async deletePackingItem(itemId: string) {
-    return this.database.delete(packingItems).where(eq(packingItems.id, itemId));
+    return this.database
+      .delete(packingItems)
+      .where(eq(packingItems.id, itemId));
   }
 
   async deletePackingItemsByTripId(tripId: string) {
-    return this.database.delete(packingItems).where(eq(packingItems.tripId, tripId));
+    return this.database
+      .delete(packingItems)
+      .where(eq(packingItems.tripId, tripId));
   }
 }

@@ -116,33 +116,47 @@ export class Routes {
     // Packing Item routes
     this.router.get(
       '/packing-items',
-      this.packingItemController.getAllPackingItems.bind(this.packingItemController),
+      this.packingItemController.getAllPackingItems.bind(
+        this.packingItemController,
+      ),
     );
     this.router.post(
       '/packing-items',
-      this.packingItemController.createPackingItem.bind(this.packingItemController),
+      this.packingItemController.createPackingItem.bind(
+        this.packingItemController,
+      ),
     );
     this.router.get(
       '/packing-items/:id',
-      this.packingItemController.getPackingItemById.bind(this.packingItemController),
+      this.packingItemController.getPackingItemById.bind(
+        this.packingItemController,
+      ),
     );
     this.router.put(
       '/packing-items/:id',
-      this.packingItemController.updatePackingItem.bind(this.packingItemController),
+      this.packingItemController.updatePackingItem.bind(
+        this.packingItemController,
+      ),
     );
     this.router.delete(
       '/packing-items/:id',
-      this.packingItemController.deletePackingItem.bind(this.packingItemController),
+      this.packingItemController.deletePackingItem.bind(
+        this.packingItemController,
+      ),
     );
 
     // Trip-specific packing item routes
     this.router.get(
       '/trips/:tripId/packing-items',
-      this.packingItemController.getPackingItemsByTripId.bind(this.packingItemController),
+      this.packingItemController.getPackingItemsByTripId.bind(
+        this.packingItemController,
+      ),
     );
     this.router.delete(
       '/trips/:tripId/packing-items',
-      this.packingItemController.deletePackingItemsByTripId.bind(this.packingItemController),
+      this.packingItemController.deletePackingItemsByTripId.bind(
+        this.packingItemController,
+      ),
     );
   }
 
