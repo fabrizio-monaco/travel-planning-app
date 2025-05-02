@@ -9,8 +9,8 @@ export const tripToDestinations = pgTable(
   {
     // Instead of spreading commonSchema, define the timestamp fields directly
     // but omit the id field with primaryKey
-    createdAt: timestamp().defaultNow(),
-    updatedAt: timestamp()
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at')
       .defaultNow()
       .$onUpdate(() => new Date()),
     tripId: uuid('trip_id')
@@ -22,11 +22,7 @@ export const tripToDestinations = pgTable(
     startDate: date('start_date'),
     endDate: date('end_date'),
   },
-  (table) => {
-    return {
-      pk: primaryKey({ columns: [table.tripId, table.destinationId] }),
-    };
-  },
+  (table) => [primaryKey({ columns: [table.tripId, table.destinationId] })],
 );
 
 export const tripToDestinationsRelations = relations(

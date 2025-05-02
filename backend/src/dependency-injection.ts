@@ -1,11 +1,14 @@
 import { App } from './app';
 import { ENV } from './config/env.config';
-import { DiaryEntryController } from './controller/diary-entry.controller';
+import { DestinationController } from './controller/destination.controller';
 import { HealthController } from './controller/health.controller';
-import { TagController } from './controller/tag.controller';
+import { PackingItemController } from './controller/packing-item.controller';
+import { TripController } from './controller/trip.controller';
 import { Database, db } from './database';
-import { DiaryEntryRepository } from './database/repository/diary-entry.repository';
-import { TagRepository } from './database/repository/tag.repository';
+import { DestinationRepository } from './database/repository/destination.repository';
+import { PackingItemRepository } from './database/repository/packing-item.repository';
+import { TripRepository } from './database/repository/trip.repository';
+import { TripToDestinationRepository } from './database/repository/trip-to-destination.repository';
 import { Routes } from './routes/routes';
 import { Server } from './server';
 
@@ -15,13 +18,16 @@ export const DI = {} as {
   server: Server;
   routes: Routes;
   repositories: {
-    diaryEntry: DiaryEntryRepository;
-    tag: TagRepository;
+    trip: TripRepository;
+    destination: DestinationRepository;
+    tripToDestination: TripToDestinationRepository;
+    packingItem: PackingItemRepository;
   };
   controllers: {
-    diaryEntry: DiaryEntryController;
     health: HealthController;
-    tag: TagController;
+    trip: TripController;
+    destination: DestinationController;
+    packingItem: PackingItemController;
   };
   utils: {};
 };
@@ -35,25 +41,35 @@ export function initializeDependencyInjection() {
 
   // Initialize repositories
   DI.repositories = {
-    diaryEntry: new DiaryEntryRepository(DI.db),
-    tag: new TagRepository(DI.db),
+    trip: new TripRepository(DI.db),
+    destination: new DestinationRepository(DI.db),
+    tripToDestination: new TripToDestinationRepository(DI.db),
+    packingItem: new PackingItemRepository(DI.db),
   };
 
   // Initialize controllers
   DI.controllers = {
-    diaryEntry: new DiaryEntryController(
-      DI.repositories.diaryEntry,
-      DI.repositories.tag,
-    ),
     health: new HealthController(),
-    tag: new TagController(DI.repositories.tag),
+    trip: new TripController(
+      DI.repositories.trip,
+      DI.repositories.tripToDestination,
+    ),
+    destination: new DestinationController(
+      DI.repositories.destination,
+      DI.repositories.tripToDestination,
+    ),
+    packingItem: new PackingItemController(
+      DI.repositories.packingItem,
+      DI.repositories.trip,
+    ),
   };
 
   // Initialize routes
   DI.routes = new Routes(
     DI.controllers.health,
-    DI.controllers.tag,
-    DI.controllers.diaryEntry,
+    DI.controllers.trip,
+    DI.controllers.destination,
+    DI.controllers.packingItem,
   );
 
   // Initialize app

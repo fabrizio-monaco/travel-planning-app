@@ -2,6 +2,7 @@ import { pgTable, varchar, text, date } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { commonSchema } from './common.schema';
 import { tripToDestinations } from './trip-to-destination.schema';
+import { packingItems } from './packing-item.schema';
 
 export const trips = pgTable('trip', {
   ...commonSchema,
@@ -15,6 +16,7 @@ export const trips = pgTable('trip', {
 
 export const tripsRelations = relations(trips, ({ many }) => ({
   tripToDestinations: many(tripToDestinations),
+  packingItems: many(packingItems),
 }));
 
 // For TypeScript type inference

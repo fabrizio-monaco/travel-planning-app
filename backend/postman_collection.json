@@ -1,0 +1,796 @@
+{
+	"info": {
+		"_postman_id": "a0c9e3f5-4e9f-4b52-bd28-1d8535d74255",
+		"name": "Travel Planner API",
+		"description": "API endpoints for the Travel Planner application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Trips",
+			"item": [
+				{
+					"name": "Get All Trips",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trips?withRelations=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips"
+							],
+							"query": [
+								{
+									"key": "withRelations",
+									"value": "false",
+									"description": "Set to 'true' to include destination relationships"
+								}
+							]
+						},
+						"description": "Retrieves a list of all trips. Use the withRelations query parameter to include or exclude destination relationships."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Trip by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/:id?withRelations=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								":id"
+							],
+							"query": [
+								{
+									"key": "withRelations",
+									"value": "false",
+									"description": "Set to 'true' to include destination relationships"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the trip"
+								}
+							]
+						},
+						"description": "Retrieves a specific trip by its ID. Use the withRelations query parameter to include or exclude destination relationships."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Trip",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Summer Vacation\",\n  \"description\": \"A relaxing trip to the beach\",\n  \"startDate\": \"2025-06-15\",\n  \"endDate\": \"2025-06-22\",\n  \"image\": \"beach.jpg\",\n  \"participants\": [\"John\", \"Jane\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/trips",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips"
+							]
+						},
+						"description": "Creates a new trip"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Trip",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Summer Vacation\",\n  \"description\": \"A relaxing trip to the mountain and beach\",\n  \"startDate\": \"2025-06-15\",\n  \"endDate\": \"2025-06-25\",\n  \"image\": \"beach-mountain.jpg\",\n  \"participants\": [\"John\", \"Jane\", \"Bob\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the trip to update"
+								}
+							]
+						},
+						"description": "Updates an existing trip"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Trip",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the trip to delete"
+								}
+							]
+						},
+						"description": "Deletes a trip by its ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Trips",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/search?query=beach&startDate=2025-06-15&endDate=2025-07-01&withRelations=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "beach",
+									"description": "Search term for trip name"
+								},
+								{
+									"key": "startDate",
+									"value": "2025-06-15",
+									"description": "Find exact start date. If used with endDate, find trips starting on or after this date."
+								},
+								{
+									"key": "endDate",
+									"value": "2025-07-01",
+									"description": "Find exact end date. If used with startDate, find trips ending on or before this date."
+								},
+								{
+									"key": "withRelations",
+									"value": "false",
+									"description": "Set to 'true' to include destination relationships"
+								}
+							]
+						},
+						"description": "Search for trips based on query string and date. If both startDate and endDate are provided, returns trips entirely within that range. If only one date is provided, performs exact date matching for that field."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Trips by Destination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/by-destination/:destinationId?withRelations=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								"by-destination",
+								":destinationId"
+							],
+							"query": [
+								{
+									"key": "withRelations",
+									"value": "false",
+									"description": "Set to 'true' to include destination relationships"
+								}
+							],
+							"variable": [
+								{
+									"key": "destinationId",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the destination"
+								}
+							]
+						},
+						"description": "Retrieves all trips associated with a specific destination. Use the withRelations query parameter to include or exclude destination relationships."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Destination to Trip",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"startDate\": \"2025-06-15\",\n  \"endDate\": \"2025-06-18\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/:tripId/destinations/:destinationId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								":tripId",
+								"destinations",
+								":destinationId"
+							],
+							"variable": [
+								{
+									"key": "tripId",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the trip"
+								},
+								{
+									"key": "destinationId",
+									"value": "123e4567-e89b-12d3-a456-426614174001",
+									"description": "UUID of the destination"
+								}
+							]
+						},
+						"description": "Associates a destination with a trip"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Trip-Destination Relationship",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"startDate\": \"2025-06-16\",\n  \"endDate\": \"2025-06-19\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/:tripId/destinations/:destinationId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								":tripId",
+								"destinations",
+								":destinationId"
+							],
+							"variable": [
+								{
+									"key": "tripId",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the trip"
+								},
+								{
+									"key": "destinationId",
+									"value": "123e4567-e89b-12d3-a456-426614174001",
+									"description": "UUID of the destination"
+								}
+							]
+						},
+						"description": "Updates the details of a trip-destination relationship"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Destination from Trip",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/:tripId/destinations/:destinationId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								":tripId",
+								"destinations",
+								":destinationId"
+							],
+							"variable": [
+								{
+									"key": "tripId",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the trip"
+								},
+								{
+									"key": "destinationId",
+									"value": "123e4567-e89b-12d3-a456-426614174001",
+									"description": "UUID of the destination"
+								}
+							]
+						},
+						"description": "Removes the association between a trip and a destination"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Destinations",
+			"item": [
+				{
+					"name": "Get All Destinations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/destinations?withRelations=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"destinations"
+							],
+							"query": [
+								{
+									"key": "withRelations",
+									"value": "false",
+									"description": "Set to 'true' to include trip relationships"
+								}
+							]
+						},
+						"description": "Retrieves a list of all destinations. Use the withRelations query parameter to include or exclude trip relationships."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Destination by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/destinations/:id?withRelations=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"destinations",
+								":id"
+							],
+							"query": [
+								{
+									"key": "withRelations",
+									"value": "false",
+									"description": "Set to 'true' to include trip relationships"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the destination"
+								}
+							]
+						},
+						"description": "Retrieves a specific destination by its ID. Use the withRelations query parameter to include or exclude trip relationships."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Destination",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Maldives\",\n  \"description\": \"Beautiful island paradise\",\n  \"activities\": [\"Snorkeling\", \"Swimming\", \"Sunbathing\"],\n  \"photos\": [\"maldives1.jpg\", \"maldives2.jpg\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/destinations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"destinations"
+							]
+						},
+						"description": "Creates a new destination"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Destination",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Maldives Islands\",\n  \"description\": \"Beautiful tropical island paradise\",\n  \"activities\": [\"Snorkeling\", \"Swimming\", \"Sunbathing\", \"Scuba Diving\"],\n  \"photos\": [\"maldives1.jpg\", \"maldives2.jpg\", \"maldives3.jpg\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/destinations/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"destinations",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the destination to update"
+								}
+							]
+						},
+						"description": "Updates an existing destination"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Destination",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/destinations/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"destinations",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the destination to delete"
+								}
+							]
+						},
+						"description": "Deletes a destination by its ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Trips for Destination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/destinations/:id/trips",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"destinations",
+								":id",
+								"trips"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the destination"
+								}
+							]
+						},
+						"description": "Retrieves all trips associated with a specific destination"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Packing Items",
+			"item": [
+				{
+					"name": "Get All Packing Items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/packing-items",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"packing-items"
+							]
+						},
+						"description": "Retrieves a list of all packing items across all trips."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Packing Item by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/packing-items/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"packing-items",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the packing item"
+								}
+							]
+						},
+						"description": "Retrieves a specific packing item by its ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Packing Item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Sunscreen\",\n  \"amount\": 2,\n  \"tripId\": \"123e4567-e89b-12d3-a456-426614174000\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/packing-items",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"packing-items"
+							]
+						},
+						"description": "Creates a new packing item for a specific trip"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Packing Item",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Sunscreen SPF 50\",\n  \"amount\": 3\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/packing-items/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"packing-items",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the packing item to update"
+								}
+							]
+						},
+						"description": "Updates an existing packing item"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Packing Item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/packing-items/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"packing-items",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the packing item to delete"
+								}
+							]
+						},
+						"description": "Deletes a packing item by its ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Packing Items for Trip",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/:tripId/packing-items",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								":tripId",
+								"packing-items"
+							],
+							"variable": [
+								{
+									"key": "tripId",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the trip"
+								}
+							]
+						},
+						"description": "Retrieves all packing items associated with a specific trip"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete All Packing Items for Trip",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/:tripId/packing-items",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								":tripId",
+								"packing-items"
+							],
+							"variable": [
+								{
+									"key": "tripId",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the trip"
+								}
+							]
+						},
+						"description": "Deletes all packing items associated with a specific trip"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"health"
+							]
+						},
+						"description": "Check if the API is up and running"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5001",
+			"type": "string"
+		}
+	]
+}
