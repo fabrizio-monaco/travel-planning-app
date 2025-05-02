@@ -67,22 +67,18 @@ const baseDestinationSchema = createInsertSchema(destinations, {
       z.array(z.string()), // Array of photo URLs
     ])
     .optional(),
-  latitude: z.number()
+  latitude: z
+    .number()
     .optional()
-    .refine(
-      (val) => val === undefined || (val >= -90 && val <= 90),
-      {
-        message: 'Latitude must be between -90 and 90 degrees',
-      }
-    ),
-  longitude: z.number()
+    .refine((val) => val === undefined || (val >= -90 && val <= 90), {
+      message: 'Latitude must be between -90 and 90 degrees',
+    }),
+  longitude: z
+    .number()
     .optional()
-    .refine(
-      (val) => val === undefined || (val >= -180 && val <= 180),
-      {
-        message: 'Longitude must be between -180 and 180 degrees',
-      }
-    ),
+    .refine((val) => val === undefined || (val >= -180 && val <= 180), {
+      message: 'Longitude must be between -180 and 180 degrees',
+    }),
 });
 
 export const createDestinationZodSchema = baseDestinationSchema;
