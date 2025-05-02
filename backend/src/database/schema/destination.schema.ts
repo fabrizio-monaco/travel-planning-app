@@ -1,4 +1,4 @@
-import { pgTable, varchar, text } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, text, real } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { commonSchema } from './common.schema';
 import { tripToDestinations } from './trip-to-destination.schema';
@@ -9,6 +9,8 @@ export const destinations = pgTable('destination', {
   description: text('description'),
   activities: text('activities'), // Store as JSON stringified array
   photos: text('photos'), // Store as JSON stringified array
+  latitude: real('latitude'), // Geographic coordinate (latitude)
+  longitude: real('longitude'), // Geographic coordinate (longitude)
 });
 
 export const destinationsRelations = relations(destinations, ({ many }) => ({

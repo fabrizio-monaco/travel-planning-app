@@ -434,7 +434,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Maldives\",\n  \"description\": \"Beautiful island paradise\",\n  \"activities\": [\"Snorkeling\", \"Swimming\", \"Sunbathing\"],\n  \"photos\": [\"maldives1.jpg\", \"maldives2.jpg\"]\n}"
+							"raw": "{\n  \"name\": \"Maldives\",\n  \"description\": \"Beautiful island paradise\",\n  \"activities\": [\"Snorkeling\", \"Swimming\", \"Sunbathing\"],\n  \"photos\": [\"maldives1.jpg\", \"maldives2.jpg\"],\n  \"latitude\": 3.2028,\n  \"longitude\": 73.2207\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/destinations",
@@ -446,7 +446,7 @@
 								"destinations"
 							]
 						},
-						"description": "Creates a new destination"
+						"description": "Creates a new destination with optional geographic coordinates (latitude and longitude)"
 					},
 					"response": []
 				},
@@ -462,7 +462,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Maldives Islands\",\n  \"description\": \"Beautiful tropical island paradise\",\n  \"activities\": [\"Snorkeling\", \"Swimming\", \"Sunbathing\", \"Scuba Diving\"],\n  \"photos\": [\"maldives1.jpg\", \"maldives2.jpg\", \"maldives3.jpg\"]\n}"
+							"raw": "{\n  \"name\": \"Maldives Islands\",\n  \"description\": \"Beautiful tropical island paradise\",\n  \"activities\": [\"Snorkeling\", \"Swimming\", \"Sunbathing\", \"Scuba Diving\"],\n  \"photos\": [\"maldives1.jpg\", \"maldives2.jpg\", \"maldives3.jpg\"],\n  \"latitude\": 3.2028,\n  \"longitude\": 73.2207\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/destinations/:id",
@@ -482,7 +482,7 @@
 								}
 							]
 						},
-						"description": "Updates an existing destination"
+						"description": "Updates an existing destination including optional geographic coordinates"
 					},
 					"response": []
 				},
