@@ -540,6 +540,121 @@
 						"description": "Retrieves all trips associated with a specific destination"
 					},
 					"response": []
+				},
+				{
+					"name": "Get Fuel Stations for Destination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/destinations/:destinationId/fuel-stations?radius=5000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"destinations",
+								":destinationId",
+								"fuel-stations"
+							],
+							"query": [
+								{
+									"key": "radius",
+									"value": "5000",
+									"description": "Search radius in meters (max 20000)"
+								}
+							],
+							"variable": [
+								{
+									"key": "destinationId",
+									"value": "123e4567-e89b-12d3-a456-426614174000",
+									"description": "UUID of the destination"
+								}
+							]
+						},
+						"description": "Retrieves fuel stations near a destination using the Geoapify API. Requires destination to have latitude and longitude coordinates. The API key is stored in the server environment variables and automatically used for requests.\n\nResponse includes:\n- A list of fuel stations with details like name, address, coordinates\n- Available fuel types at each station (diesel, e10, e5/95, lpg, etc.)\n- Distance from the destination coordinates\n- Opening hours if available"
+					},
+					"response": [
+						{
+							"name": "Successful Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/destinations/:destinationId/fuel-stations?radius=5000",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"destinations",
+										":destinationId",
+										"fuel-stations"
+									],
+									"query": [
+										{
+											"key": "radius",
+											"value": "5000",
+											"description": "Search radius in meters (max 20000)"
+										}
+									],
+									"variable": [
+										{
+											"key": "destinationId",
+											"value": "123e4567-e89b-12d3-a456-426614174000"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"data\": [\n    {\n      \"id\": \"519ec20078fa172240591059e40d8b164940f00103f901aa974a96020000009203044573736f\",\n      \"name\": \"Esso\",\n      \"distance\": 616,\n      \"address\": {\n        \"formatted\": \"Esso, Gelnhäuser Straße 36, 63505 Langenselbold, Germany\",\n        \"street\": \"Gelnhäuser Straße\",\n        \"city\": \"Langenselbold\",\n        \"postcode\": \"63505\",\n        \"country\": \"Germany\"\n      },\n      \"location\": {\n        \"latitude\": 50.176118599412916,\n        \"longitude\": 9.0468328\n      },\n      \"fuelTypes\": [\"diesel\", \"e10\", \"e5/95\", \"lpg\"],\n      \"openingHours\": {\n        \"open24h\": false,\n        \"text\": \"Mo-Fr 06:00-22:00; Sa 07:00-22:00; Su 08:00-22:00\"\n      }\n    },\n    {\n      \"id\": \"5109dffb1bb4172240595c467a2c7d164940f00103f901ec95ef0e000000009203044172616c\",\n      \"name\": \"Aral\",\n      \"distance\": 618,\n      \"address\": {\n        \"formatted\": \"Aral, Gelnhäuser Straße 17a, 63505 Langenselbold, Germany\",\n        \"street\": \"Gelnhäuser Straße\",\n        \"city\": \"Langenselbold\",\n        \"postcode\": \"63505\",\n        \"country\": \"Germany\"\n      },\n      \"location\": {\n        \"latitude\": 50.175694999413025,\n        \"longitude\": 9.046296\n      },\n      \"fuelTypes\": [\"diesel\", \"e5/95\", \"e10\"]\n    }\n  ],\n  \"destination\": {\n    \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\n    \"name\": \"Langenselbold\",\n    \"latitude\": 50.1795159,\n    \"longitude\": 9.0400136\n  },\n  \"radius\": 5000\n}"
+						},
+						{
+							"name": "Missing Coordinates",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/destinations/:destinationId/fuel-stations",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"destinations",
+										":destinationId",
+										"fuel-stations"
+									],
+									"variable": [
+										{
+											"key": "destinationId",
+											"value": "123e4567-e89b-12d3-a456-426614174000"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"errors\": [\"Destination does not have geographic coordinates (latitude/longitude)\"]\n}"
+						}
+					]
 				}
 			]
 		},
@@ -551,7 +666,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
+							"url": {
 							"raw": "{{baseUrl}}/api/packing-items?withRelations=false",
 							"host": [
 								"{{baseUrl}}"
@@ -613,7 +728,7 @@
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+									"value": "application/json"
 							}
 						],
 						"body": {

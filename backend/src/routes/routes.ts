@@ -4,6 +4,7 @@ import { HealthController } from '../controller/health.controller';
 import { TripController } from '../controller/trip.controller';
 import { DestinationController } from '../controller/destination.controller';
 import { PackingItemController } from '../controller/packing-item.controller';
+import { FuelStationController } from '../controller/fuel-station.controller';
 
 export class Routes {
   private router: Router;
@@ -13,6 +14,7 @@ export class Routes {
     private readonly tripController: TripController,
     private readonly destinationController: DestinationController,
     private readonly packingItemController: PackingItemController,
+    private readonly fuelStationController: FuelStationController,
   ) {
     this.router = Router();
     this.initializeRoutes();
@@ -110,6 +112,14 @@ export class Routes {
       '/destinations/:id/trips',
       this.destinationController.getTripsForDestination.bind(
         this.destinationController,
+      ),
+    );
+
+    // Fuel Station routes
+    this.router.get(
+      '/destinations/:destinationId/fuel-stations',
+      this.fuelStationController.getFuelStationsByDestination.bind(
+        this.fuelStationController,
       ),
     );
 
