@@ -2,6 +2,7 @@ import { and, eq } from 'drizzle-orm';
 import { Database } from '../';
 import { tripToDestinations } from '../schema/trip-to-destination.schema';
 import { TripToDestinationData } from '../../validation/validation';
+import { formatDateForDb } from '../../utils/date-utils';
 
 export class TripToDestinationRepository {
   constructor(private readonly database: Database) {}
@@ -11,13 +12,9 @@ export class TripToDestinationRepository {
     destinationId: string,
     data: TripToDestinationData = {},
   ) {
-    // Convert Date objects to ISO strings for database storage
-    const startDateStr = data.startDate
-      ? data.startDate.toISOString().split('T')[0]
-      : undefined;
-    const endDateStr = data.endDate
-      ? data.endDate.toISOString().split('T')[0]
-      : undefined;
+    // Format dates for database storage using the utility function
+    const startDateStr = formatDateForDb(data.startDate) || undefined;
+    const endDateStr = formatDateForDb(data.endDate) || undefined;
 
     const [relation] = await this.database
       .insert(tripToDestinations)
@@ -36,13 +33,9 @@ export class TripToDestinationRepository {
     destinationId: string,
     data: TripToDestinationData = {},
   ) {
-    // Convert Date objects to ISO strings for database storage
-    const startDateStr = data.startDate
-      ? data.startDate.toISOString().split('T')[0]
-      : undefined;
-    const endDateStr = data.endDate
-      ? data.endDate.toISOString().split('T')[0]
-      : undefined;
+    // Format dates for database storage using the utility function
+    const startDateStr = formatDateForDb(data.startDate) || undefined;
+    const endDateStr = formatDateForDb(data.endDate) || undefined;
 
     const [updatedRelation] = await this.database
       .update(tripToDestinations)

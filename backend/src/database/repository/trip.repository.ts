@@ -3,6 +3,7 @@ import { Database } from '../';
 import { trips } from '../schema/trip.schema';
 import { tripToDestinations } from '../schema/trip-to-destination.schema';
 import { CreateTrip, UpdateTrip } from '../../validation/validation';
+import { formatDateForDb } from '../../utils/date-utils';
 
 export class TripRepository {
   constructor(private readonly database: Database) {}
@@ -97,24 +98,22 @@ export class TripRepository {
       conditions.push(like(trips.name, `%${query}%`));
     }
 
-    // Convert dates to ISO strings for database comparison
-    const startDateStr = startDate
-      ? startDate.toISOString().split('T')[0]
-      : null;
-    const endDateStr = endDate ? endDate.toISOString().split('T')[0] : null;
+    // Format dates for database comparison using the utility function
+    const startDateStr = formatDateForDb(startDate);
+    const endDateStr = formatDateForDb(endDate);
 
-    // Search by date range if both dates are provided
+    // Search by date range if dates are provided
     if (startDateStr && endDateStr) {
       // Find trips that are entirely within the provided date range
       conditions.push(
         and(gte(trips.startDate, startDateStr), lte(trips.endDate, endDateStr)),
       );
     } else if (startDateStr) {
-      // Only start date provided - find trips that start exactly on this date
-      conditions.push(eq(trips.startDate, startDateStr));
+      // Only start date provided - find trips that start on or after this date
+      conditions.push(gte(trips.startDate, startDateStr));
     } else if (endDateStr) {
-      // Only end date provided - find trips that end exactly on this date
-      conditions.push(eq(trips.endDate, endDateStr));
+      // Only end date provided - find trips that end on or before this date
+      conditions.push(lte(trips.endDate, endDateStr));
     }
 
     const whereCondition =

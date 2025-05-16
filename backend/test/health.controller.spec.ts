@@ -1,28 +1,42 @@
-import express, { Application } from 'express';
-import request from 'supertest';
-
+import { Request, Response } from 'express';
 import { HealthController } from '../src/controller/health.controller';
 
 /**
- * This test is neither a unit test nor a full integration test.
- * It functions more as a functional or API/endpoint test, as it verifies the endpoint's response
- * without mocking dependencies or combining multiple components but also not using our real system.
+ * Unit test for the HealthController class.
+ *
+ * Typically, controllers are tested with integration tests rather than unit tests,
+ * as integration tests are generally easier to write, understand, and better simulate real-world scenarios.
+ * However, this example demonstrates how to mock dependencies to isolate and test controller logic.
  */
 describe('HealthController', () => {
-  let app: Application;
+  let healthController: HealthController;
+  let mockRequest: Partial<Request>;
+  let mockResponse: Partial<Response>;
 
   beforeEach(() => {
-    app = express();
-    const healthController = new HealthController();
-    app.get('/health', healthController.getHealthStatus);
+    // Create controller instance
+    healthController = new HealthController();
+
+    // Setup mock request and response
+    mockRequest = {};
+    mockResponse = {
+      send: jest.fn(),
+    };
   });
 
-  describe('GET /health', () => {
-    it('should return 200 with date', async () => {
-      const response = await request(app).get('/health').expect(200);
+  describe('getHealthStatus', () => {
+    it('should return the current date', async () => {
+      // Act
+      await healthController.getHealthStatus(
+        mockRequest as Request,
+        mockResponse as Response,
+      );
 
-      expect(response.body).toHaveProperty('date');
-      expect(new Date(response.body.date)).toBeInstanceOf(Date);
+      // Assert
+      expect(mockResponse.send).toHaveBeenCalled();
+      const sentData = (mockResponse.send as jest.Mock).mock.calls[0][0];
+      expect(sentData).toHaveProperty('date');
+      expect(new Date(sentData.date)).toBeInstanceOf(Date);
     });
   });
 });

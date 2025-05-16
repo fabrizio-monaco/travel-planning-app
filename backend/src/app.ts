@@ -1,5 +1,6 @@
 import express, { Application } from 'express';
 import helmet from 'helmet';
+import cors from 'cors';
 
 import { Routes } from './routes/routes';
 import { globalErrorHandler } from './utils/global-error';
@@ -18,6 +19,7 @@ export class App {
     // Middlewares could also be injected via constructor which would be even better and easily testable
     this.app.use(helmet());
     this.app.use(express.json());
+    this.app.use(cors());
 
     this.app.use((req, _res, next) => {
       console.info(`New request to ${req.path}`);
