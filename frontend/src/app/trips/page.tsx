@@ -1,165 +1,197 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { SearchBar } from '@/components/search-bar';
-import { Trip, tripApi } from '@/lib/api';
-import { formatDateForDisplay, getErrorMessage, truncateText } from '@/lib/utils';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { tripsApi } from '@/services/trips-api';
+import { Trip } from '@/types';
+import {
+  DeleteConfirmationDialog,
+  useDeleteConfirmation,
+} from '@/components/delete-confirmation-dialog';
 
 export default function TripsPage() {
+  const router = useRouter();
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchDate, setSearchDate] = useState('');
+  const { isDialogOpen, confirmDelete, handleConfirm, handleClose } =
+    useDeleteConfirmation();
 
   useEffect(() => {
-    loadTrips();
+    fetchTrips();
   }, []);
 
-  async function loadTrips() {
+  const fetchTrips = async () => {
     try {
       setLoading(true);
-      setError(null);
-      const data = await tripApi.getAll();
+      const data = await tripsApi.getAllTrips();
       setTrips(data);
-    } catch (err) {
-      setError(getErrorMessage(err));
+    } catch (error) {
       toast.error('Failed to load trips');
+      console.error(error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  async function handleSearch(searchParams: { query?: string; startDate?: string; endDate?: string }) {
+  const handleSearch = async () => {
     try {
       setLoading(true);
-      setError(null);
-      
-      // If no search parameters are provided, load all trips
-      if (!searchParams.query && !searchParams.startDate && !searchParams.endDate) {
-        await loadTrips();
-        return;
+      let startDate, endDate;
+
+      if (searchDate) {
+        startDate = searchDate;
       }
-      
-      const data = await tripApi.search(searchParams);
+
+      const data = await tripsApi.searchTrips(searchQuery, startDate, endDate);
       setTrips(data);
-      
-      if (data.length === 0) {
-        toast.info('No trips found matching your search criteria');
+    } catch (error) {
+      toast.error('Search failed');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleDelete = (id: string) => {
+    confirmDelete(async () => {
+      try {
+        await tripsApi.deleteTrip(id);
+        toast.success('Trip deleted successfully');
+        fetchTrips();
+      } catch (error) {
+        toast.error('Failed to delete trip');
+        console.error(error);
       }
-    } catch (err) {
-      setError(getErrorMessage(err));
-      toast.error('Failed to search trips');
-    } finally {
-      setLoading(false);
-    }
-  }
+    });
+  };
 
-  async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this trip?')) {
-      return;
-    }
-    
-    try {
-      setLoading(true);
-      await tripApi.delete(id);
-      setTrips(trips.filter(trip => trip.id !== id));
-      toast.success('Trip deleted successfully');
-    } catch (err) {
-      toast.error(`Failed to delete trip: ${getErrorMessage(err)}`);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const formatDateRange = (startDate: string, endDate: string) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`;
+  };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">My Trips</h1>
-        <Button size="sm" asChild>
-          <Link href="/trips/new">New Trip</Link>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Your Trips</h1>
+        <Button asChild>
+          <Link href="/trips/new">Create New Trip</Link>
         </Button>
       </div>
 
-      <SearchBar onSearch={handleSearch} />
-      
-      {loading && (
-        <div className="text-center py-10">
-          <p className="text-gray-500">Loading trips...</p>
+      <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex-1 min-w-[200px]">
+          <Input
+            placeholder="Search trips by name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
-      )}
-      
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-6">
-          <p>{error}</p>
-          <Button 
-            variant="outline" 
-            className="mt-2" 
-            onClick={loadTrips}
-          >
-            Retry
+        <div className="w-48">
+          <Input
+            type="date"
+            value={searchDate}
+            onChange={(e) => setSearchDate(e.target.value)}
+          />
+        </div>
+        <Button onClick={handleSearch}>Search</Button>
+        <Button variant="outline" onClick={fetchTrips}>
+          Reset
+        </Button>
+      </div>
+
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader className="h-16 bg-gray-100 rounded-t-lg"></CardHeader>
+              <CardContent className="h-32 bg-gray-50"></CardContent>
+              <CardFooter className="h-12 bg-gray-100 rounded-b-lg"></CardFooter>
+            </Card>
+          ))}
+        </div>
+      ) : trips.length === 0 ? (
+        <div className="text-center py-12">
+          <h3 className="text-lg font-medium text-gray-600">No trips found</h3>
+          <p className="text-gray-500 mt-1">Start by creating a new trip</p>
+          <Button className="mt-4" asChild>
+            <Link href="/trips/new">Create New Trip</Link>
           </Button>
         </div>
-      )}
-      
-      {!loading && !error && trips.length === 0 && (
-        <div className="text-center py-10 bg-white rounded-lg border shadow-sm">
-          <h2 className="text-xl font-medium mb-2">No trips found</h2>
-          <p className="text-gray-500 mb-4">Create your first trip to get started.</p>
-          <Button asChild>
-            <Link href="/trips/new">Create a Trip</Link>
-          </Button>
-        </div>
-      )}
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {trips.map((trip) => (
-          <Card key={trip.id} className="transition-shadow hover:shadow-md">
-            <CardHeader>
-              <CardTitle className="flex justify-between items-start">
-                <Link href={`/trips/${trip.id}`} className="hover:underline">
-                  {trip.name}
-                </Link>
-              </CardTitle>
-              <p className="text-sm text-gray-500">
-                {formatDateForDisplay(trip.startDate)} - {formatDateForDisplay(trip.endDate)}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">{truncateText(trip.description, 100)}</p>
-              
-              {trip.participants && Array.isArray(trip.participants) && trip.participants.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-sm font-medium">Participants:</p>
-                  <p className="text-sm text-gray-500">
-                    {trip.participants.join(', ')}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" asChild>
-                <Link href={`/trips/${trip.id}`}>View Details</Link>
-              </Button>
-              <div className="flex gap-2">
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {trips.map((trip) => (
+            <Card key={trip.id} className="overflow-hidden flex flex-col">
+              <CardHeader>
+                <CardTitle>{trip.name}</CardTitle>
+                <p className="text-sm text-gray-500">
+                  {formatDateRange(trip.startDate, trip.endDate)}
+                </p>
+              </CardHeader>{' '}
+              <CardContent className="flex-1">
+                <p className="line-clamp-2 text-gray-600">{trip.description}</p>
+                {(() => {
+                  try {
+                    const parsedParticipants = JSON.parse(
+                      trip.participants || '[]'
+                    );
+                    if (
+                      Array.isArray(parsedParticipants) &&
+                      parsedParticipants.length > 0
+                    ) {
+                      return (
+                        <div className="mt-3">
+                          <p className="text-sm text-gray-500">
+                            {parsedParticipants.length} participant
+                            {parsedParticipants.length !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  } catch (e) {
+                    return null;
+                  }
+                })()}
+              </CardContent>
+              <CardFooter className="border-t pt-4 flex justify-between">
                 <Button variant="outline" size="sm" asChild>
-                  <Link href={`/trips/${trip.id}/edit`}>Edit</Link>
+                  <Link href={`/trips/${trip.id}`}>View Details</Link>
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="destructive"
+                  size="sm"
                   onClick={() => handleDelete(trip.id)}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
                 >
                   Delete
                 </Button>
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+              </CardFooter>
+            </Card>
+          ))}{' '}
+        </div>
+      )}
+
+      <DeleteConfirmationDialog
+        isOpen={isDialogOpen}
+        onClose={handleClose}
+        onConfirm={handleConfirm}
+        title="Delete Trip"
+        description="Are you sure you want to delete this trip? This action cannot be undone."
+      />
     </div>
   );
 }

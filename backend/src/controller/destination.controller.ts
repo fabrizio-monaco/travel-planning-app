@@ -12,7 +12,6 @@ export class DestinationController {
     private readonly destinationRepository: DestinationRepository,
     private readonly tripToDestinationRepository: TripToDestinationRepository,
   ) {}
-
   async getAllDestinations(req: Request, res: Response): Promise<void> {
     try {
       // Check if withRelations query parameter is present
@@ -175,7 +174,6 @@ export class DestinationController {
       res.status(500).json({ errors: ['Error deleting destination'] });
     }
   }
-
   async getTripsForDestination(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
@@ -193,6 +191,17 @@ export class DestinationController {
             'Invalid destination id format. Please provide a valid UUID.',
           ],
         });
+        return;
+      }
+
+      // Check if destination exists first
+      const destination = await this.destinationRepository.getDestinationById(
+        validatedId.data,
+        false,
+      );
+
+      if (!destination) {
+        res.status(404).json({ errors: ['Destination not found'] });
         return;
       }
 

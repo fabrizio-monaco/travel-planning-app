@@ -29,15 +29,14 @@ export class Routes {
     this.router.get(
       '/health',
       this.healthController.getHealthStatus.bind(this.healthController),
-    );
-
-    // Trip routes - specific routes first
+    ); // Trip routes - specific routes first
     this.router.get(
       '/trips/search',
       this.tripController.searchTrips.bind(this.tripController),
     );
+    // Using kebab-case for REST API endpoints
     this.router.get(
-      '/trips/byDestination/:destinationId',
+      '/trips/by-destination/:destinationId',
       this.tripController.getTripsByDestination.bind(this.tripController),
     );
 

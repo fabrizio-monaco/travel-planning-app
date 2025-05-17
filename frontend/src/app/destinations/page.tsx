@@ -1,144 +1,226 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Destination, destinationApi } from '@/lib/api';
-import { getErrorMessage, truncateText } from '@/lib/utils';
+import Image from 'next/image';
 import { toast } from 'sonner';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { destinationsApi } from '@/services/destinations-api';
+import { Destination } from '@/types';
+import {
+  DeleteConfirmationDialog,
+  useDeleteConfirmation,
+} from '@/components/delete-confirmation-dialog';
 
 export default function DestinationsPage() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredDestinations, setFilteredDestinations] = useState<
+    Destination[]
+  >([]);
+  const { isDialogOpen, confirmDelete, handleConfirm, handleClose } =
+    useDeleteConfirmation();
 
   useEffect(() => {
-    loadDestinations();
+    fetchDestinations();
   }, []);
 
-  async function loadDestinations() {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await destinationApi.getAll();
-      setDestinations(data);
-    } catch (err) {
-      setError(getErrorMessage(err));
-      toast.error('Failed to load destinations');
-    } finally {
-      setLoading(false);
-    }
-  }
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredDestinations(destinations);
+    } else {
+      const query = searchQuery.toLowerCase();
+      const filtered = destinations.filter((destination) => {
+        // Handle activities which might be a string or an array
+        const activitiesArray: string[] = Array.isArray(destination.activities)
+          ? destination.activities
+          : typeof destination.activities === 'string'
+          ? JSON.parse(destination.activities)
+          : [];
 
-  async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this destination?')) {
-      return;
+        return (
+          destination.name.toLowerCase().includes(query) ||
+          destination.description.toLowerCase().includes(query) ||
+          activitiesArray.some((activity: string) =>
+            activity.toLowerCase().includes(query)
+          )
+        );
+      });
+      setFilteredDestinations(filtered);
     }
-    
+  }, [searchQuery, destinations]);
+
+  const fetchDestinations = async () => {
     try {
       setLoading(true);
-      await destinationApi.delete(id);
-      setDestinations(destinations.filter(dest => dest.id !== id));
-      toast.success('Destination deleted successfully');
-    } catch (err) {
-      toast.error(`Failed to delete destination: ${getErrorMessage(err)}`);
+      const data = await destinationsApi.getAllDestinations();
+      setDestinations(data);
+      setFilteredDestinations(data);
+    } catch (error) {
+      toast.error('Failed to load destinations');
+      console.error(error);
     } finally {
       setLoading(false);
     }
-  }
+  };
+  const handleDelete = (id: string) => {
+    confirmDelete(async () => {
+      try {
+        await destinationsApi.deleteDestination(id);
+        toast.success('Destination deleted successfully');
+        fetchDestinations();
+      } catch (error) {
+        toast.error('Failed to delete destination');
+        console.error(error);
+      }
+    });
+  };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Destinations</h1>
-        <Button size="sm" asChild>
-          <Link href="/destinations/new">New Destination</Link>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">All Destinations</h1>
+        <Button asChild>
+          <Link href="/destinations/new">Create New Destination</Link>
         </Button>
       </div>
-      
-      {loading && (
-        <div className="text-center py-10">
-          <p className="text-gray-500">Loading destinations...</p>
+
+      <div className="flex items-center gap-4">
+        <div className="flex-1">
+          <Input
+            placeholder="Search destinations..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
-      )}
-      
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-6">
-          <p>{error}</p>
-          <Button 
-            variant="outline" 
-            className="mt-2" 
-            onClick={loadDestinations}
-          >
-            Retry
-          </Button>
+        <Button
+          variant="outline"
+          onClick={() => setSearchQuery('')}
+          disabled={!searchQuery}
+        >
+          Clear
+        </Button>
+      </div>
+
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <div className="h-40 bg-gray-100"></div>
+              <CardHeader className="h-16 bg-gray-50"></CardHeader>
+              <CardContent className="h-24 bg-gray-50"></CardContent>
+              <CardFooter className="h-12 bg-gray-100"></CardFooter>
+            </Card>
+          ))}
         </div>
-      )}
-      
-      {!loading && !error && destinations.length === 0 && (
-        <div className="text-center py-10 bg-white rounded-lg border shadow-sm">
-          <h2 className="text-xl font-medium mb-2">No destinations found</h2>
-          <p className="text-gray-500 mb-4">Create your first destination to get started.</p>
-          <Button asChild>
-            <Link href="/destinations/new">Create a Destination</Link>
-          </Button>
+      ) : filteredDestinations.length === 0 ? (
+        <div className="text-center py-12">
+          <h3 className="text-lg font-medium text-gray-600">
+            No destinations found
+          </h3>
+          {searchQuery ? (
+            <p className="text-gray-500 mt-1">Try a different search term</p>
+          ) : (
+            <p className="text-gray-500 mt-1">
+              Start by creating a new destination
+            </p>
+          )}
+          {!searchQuery && (
+            <Button className="mt-4" asChild>
+              <Link href="/destinations/new">Create New Destination</Link>
+            </Button>
+          )}
         </div>
-      )}
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {destinations.map((destination) => (
-          <Card key={destination.id} className="transition-shadow hover:shadow-md">
-            <CardHeader>
-              <CardTitle className="flex justify-between items-start">
-                <Link href={`/destinations/${destination.id}`} className="hover:underline">
-                  {destination.name}
-                </Link>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">{truncateText(destination.description, 100)}</p>
-              
-              {destination.activities && destination.activities.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-sm font-medium">Activities:</p>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {destination.activities.map((activity, index) => (
-                      <span key={index} className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
-                        {activity}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {destination.latitude && destination.longitude && (
-                <div className="mt-4 text-sm text-gray-500">
-                  <p>Coordinates: {destination.latitude.toFixed(4)}, {destination.longitude.toFixed(4)}</p>
-                </div>
-              )}
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" asChild>
-                <Link href={`/destinations/${destination.id}`}>View Details</Link>
-              </Button>
-              <div className="flex gap-2">
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredDestinations.map((destination) => (
+            <Card
+              key={destination.id}
+              className="overflow-hidden flex flex-col"
+            >
+              <CardHeader>
+                <CardTitle>{destination.name}</CardTitle>
+              </CardHeader>
+
+              <CardContent className="flex-1">
+                <p className="line-clamp-2 text-gray-600 mb-3">
+                  {destination.description}
+                </p>
+
+                {(() => {
+                  let activities: string[] = [];
+
+                  try {
+                    if (destination.activities) {
+                      activities = Array.isArray(destination.activities)
+                        ? destination.activities
+                        : JSON.parse(destination.activities);
+                    }
+                  } catch (e) {
+                    console.error('Invalid activities format', e);
+                  }
+                  return (
+                    activities.length > 0 && (
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">
+                          Activities:
+                        </p>{' '}
+                        <div className="flex flex-wrap gap-1">
+                          {activities
+                            .slice(0, 3)
+                            .map((activity: string, index: number) => (
+                              <Badge key={index} variant="outline">
+                                {activity}
+                              </Badge>
+                            ))}
+                          {activities.length > 3 && (
+                            <Badge variant="outline">
+                              +{activities.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  );
+                })()}
+              </CardContent>
+
+              <CardFooter className="border-t pt-4 flex justify-between">
                 <Button variant="outline" size="sm" asChild>
-                  <Link href={`/destinations/${destination.id}/edit`}>Edit</Link>
+                  <Link href={`/destinations/${destination.id}`}>
+                    View Details
+                  </Link>
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="destructive"
+                  size="sm"
                   onClick={() => handleDelete(destination.id)}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
                 >
                   Delete
-                </Button>
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+                </Button>{' '}
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <DeleteConfirmationDialog
+        isOpen={isDialogOpen}
+        onClose={handleClose}
+        onConfirm={handleConfirm}
+        title="Delete Destination"
+        description="Are you sure you want to delete this destination? This action cannot be undone."
+      />
     </div>
   );
 }
