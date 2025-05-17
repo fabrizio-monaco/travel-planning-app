@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react'; // Added React import for future compatibility
 import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -23,6 +24,9 @@ export default function EditDestinationPage({
 }: {
   params: { id: string };
 }) {
+  // Extract id from params to avoid direct access warning
+  const { id } = params;
+
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -36,14 +40,13 @@ export default function EditDestinationPage({
   });
   const [activitiesInput, setActivitiesInput] = useState('');
   const [photosInput, setPhotosInput] = useState('');
-
   useEffect(() => {
     fetchDestinationDetails();
-  }, [params.id]);
+  }, [id]);
   const fetchDestinationDetails = async () => {
     try {
       setLoading(true);
-      const destination = await destinationsApi.getDestinationById(params.id);
+      const destination = await destinationsApi.getDestinationById(id);
 
       setDestinationForm(destination);
 
@@ -83,10 +86,8 @@ export default function EditDestinationPage({
         .filter((p) => p !== '');
 
       // Convert photos array to JSON string
-      const photosJson = JSON.stringify(photosArray);
-
-      // Only include necessary fields for the update request - avoid sending ID and other metadata
-      await destinationsApi.updateDestination(params.id, {
+      const photosJson = JSON.stringify(photosArray); // Only include necessary fields for the update request - avoid sending ID and other metadata
+      await destinationsApi.updateDestination(id, {
         name: destinationForm.name,
         description: destinationForm.description,
         latitude: destinationForm.latitude,
@@ -94,9 +95,8 @@ export default function EditDestinationPage({
         activities: activitiesJson,
         photos: photosJson,
       });
-
       toast.success('Destination updated successfully');
-      router.push(`/destinations/${params.id}`);
+      router.push(`/destinations/${id}`);
     } catch (error) {
       toast.error('Failed to update destination');
       console.error(error);
@@ -229,11 +229,10 @@ export default function EditDestinationPage({
                 />
               </div>
             </div>
-          </CardContent>
-
+          </CardContent>{' '}
           <CardFooter className="flex justify-between">
             <Button type="button" variant="outline" asChild>
-              <Link href={`/destinations/${params.id}`}>Cancel</Link>
+              <Link href={`/destinations/${id}`}>Cancel</Link>
             </Button>
             <Button type="submit" disabled={submitting}>
               {submitting ? 'Saving...' : 'Save Destination'}

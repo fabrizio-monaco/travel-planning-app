@@ -60,7 +60,6 @@ export const tripsApi = {
       }
     }
 
-    console.log('Updating trip with ID:', id, 'Data:', updateData);
     const response = await fetch(`${BASE_URL}/trips/${id}`, {
       method: 'PUT',
       headers: {

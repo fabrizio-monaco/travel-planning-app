@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react'; // Import React for future use of React.use()
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -41,6 +42,10 @@ export default function TripDetailsPage({
 }: {
   params: { id: string };
 }) {
+  // Extract id from params to avoid direct access warning
+  // In future versions of Next.js, you'll need to use React.use()
+  const { id } = params;
+
   const router = useRouter();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [destinations, setDestinations] = useState<Destination[]>([]);
@@ -76,18 +81,16 @@ export default function TripDetailsPage({
   useEffect(() => {
     fetchTripDetails();
     fetchAllDestinations();
-  }, [params.id]);
+  }, [id]);
 
   const fetchTripDetails = async () => {
     try {
       setLoading(true);
-      const tripData = await tripsApi.getTripById(params.id, true);
+      const tripData = await tripsApi.getTripById(id, true);
       setTrip(tripData);
 
       // Fetch packing items
-      const packingItemsData = await packingItemsApi.getPackingItemsForTrip(
-        params.id
-      );
+      const packingItemsData = await packingItemsApi.getPackingItemsForTrip(id);
       setPackingItems(packingItemsData);
 
       // Initialize radius settings for each destination
@@ -124,7 +127,7 @@ export default function TripDetailsPage({
     }
 
     try {
-      await tripsApi.addDestinationToTrip(params.id, selectedDestination, {
+      await tripsApi.addDestinationToTrip(id, selectedDestination, {
         startDate: destinationStartDate,
         endDate: destinationEndDate,
       });
@@ -141,7 +144,7 @@ export default function TripDetailsPage({
   const handleRemoveDestination = (destinationId: string) => {
     destinationRemoveDialog.confirmDelete(async () => {
       try {
-        await tripsApi.removeDestinationFromTrip(params.id, destinationId);
+        await tripsApi.removeDestinationFromTrip(id, destinationId);
         toast.success('Destination removed from trip');
         fetchTripDetails();
       } catch (error) {
@@ -161,14 +164,12 @@ export default function TripDetailsPage({
       await packingItemsApi.createPackingItem({
         name: newPackingItem.name,
         amount: newPackingItem.amount,
-        tripId: params.id,
+        tripId: id,
       });
       toast.success('Packing item added');
       setNewPackingItem({ name: '', amount: 1 });
 
-      const updatedItems = await packingItemsApi.getPackingItemsForTrip(
-        params.id
-      );
+      const updatedItems = await packingItemsApi.getPackingItemsForTrip(id);
       setPackingItems(updatedItems);
     } catch (error) {
       toast.error('Failed to add packing item');
@@ -180,9 +181,7 @@ export default function TripDetailsPage({
     try {
       await packingItemsApi.deletePackingItem(id);
       toast.success('Item removed');
-      const updatedItems = await packingItemsApi.getPackingItemsForTrip(
-        params.id
-      );
+      const updatedItems = await packingItemsApi.getPackingItemsForTrip(id);
       setPackingItems(updatedItems);
     } catch (error) {
       toast.error('Failed to delete item');
@@ -211,9 +210,7 @@ export default function TripDetailsPage({
       setEditingItemId(null);
 
       // Refresh the list
-      const updatedItems = await packingItemsApi.getPackingItemsForTrip(
-        params.id
-      );
+      const updatedItems = await packingItemsApi.getPackingItemsForTrip(id);
       setPackingItems(updatedItems);
     } catch (error) {
       toast.error('Failed to update item');
