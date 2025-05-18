@@ -14,6 +14,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Gallery } from '@/components/custom/gallery';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
@@ -310,8 +312,7 @@ export default function TripDetailsClient({
             Delete Trip
           </Button>
         </div>
-      </div>
-
+      </div>{' '}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <Card>
@@ -319,43 +320,84 @@ export default function TripDetailsClient({
               <CardTitle>Trip Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700">{trip.description}</p>
+              <Tabs defaultValue="details" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="details">Details</TabsTrigger>
+                  <TabsTrigger value="gallery">Gallery</TabsTrigger>
+                  <TabsTrigger value="participants">Participants</TabsTrigger>
+                </TabsList>
 
-              <div className="mt-4">
-                <h4 className="font-medium">Participants</h4>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {(() => {
-                    try {
-                      const participants = JSON.parse(trip.participants);
-                      if (
-                        !Array.isArray(participants) ||
-                        participants.length === 0
-                      ) {
+                <TabsContent value="details" className="pt-4">
+                  <p className="text-gray-700">{trip.description}</p>
+                </TabsContent>
+                <TabsContent value="gallery" className="pt-4">
+                  {trip.image ? (
+                    <Gallery
+                      imageData={trip.image}
+                      tripName={trip.name}
+                      tripId={trip.id}
+                      onImagesUpdate={(newImageData) => {
+                        setTrip({
+                          ...trip,
+                          image: newImageData,
+                        });
+                      }}
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center p-8 bg-muted/30 rounded-md">
+                      <p className="text-muted-foreground mb-4">
+                        No images available for this trip
+                      </p>
+                      <Gallery
+                        imageData="[]"
+                        tripName={trip.name}
+                        tripId={trip.id}
+                        onImagesUpdate={(newImageData) => {
+                          setTrip({
+                            ...trip,
+                            image: newImageData,
+                          });
+                        }}
+                      />
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="participants" className="pt-4">
+                  <div className="flex flex-wrap gap-2">
+                    {(() => {
+                      try {
+                        const participants = JSON.parse(trip.participants);
+                        if (
+                          !Array.isArray(participants) ||
+                          participants.length === 0
+                        ) {
+                          return (
+                            <span className="text-gray-500 text-sm">
+                              No participants yet.
+                            </span>
+                          );
+                        }
+
+                        return participants.map((participant, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                          >
+                            {participant}
+                          </span>
+                        ));
+                      } catch (e) {
                         return (
-                          <span className="text-gray-500 text-sm">
-                            No participants yet.
+                          <span className="text-red-500 text-sm">
+                            Invalid participant data.
                           </span>
                         );
                       }
-
-                      return participants.map((participant, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                        >
-                          {participant}
-                        </span>
-                      ));
-                    } catch (e) {
-                      return (
-                        <span className="text-red-500 text-sm">
-                          Invalid participant data.
-                        </span>
-                      );
-                    }
-                  })()}
-                </div>
-              </div>
+                    })()}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
 
@@ -749,7 +791,6 @@ export default function TripDetailsClient({
           </Card>
         </div>{' '}
       </div>
-
       {/* Trip Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         isOpen={tripDeleteDialog.isDialogOpen}
@@ -758,7 +799,6 @@ export default function TripDetailsClient({
         title="Delete Trip"
         description="Are you sure you want to delete this trip? This action cannot be undone."
       />
-
       {/* Destination Remove Confirmation Dialog */}
       <DeleteConfirmationDialog
         isOpen={destinationRemoveDialog.isDialogOpen}

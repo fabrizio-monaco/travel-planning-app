@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, FormEvent } from 'react';
+import React, { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
@@ -29,9 +28,6 @@ export default function TripEditClient({
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(
-    initialTripData.image || null
-  );
 
   // Format dates for input fields
   const formattedTrip = {
@@ -56,22 +52,12 @@ export default function TripEditClient({
       return '';
     }
   })();
-
   const [participantsInput, setParticipantsInput] = useState(
     initialParticipantsInput
   );
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string;
   }>({});
-
-  // Update image preview when image URL changes
-  useEffect(() => {
-    if (tripForm.image) {
-      setImagePreview(tripForm.image);
-    } else {
-      setImagePreview(null);
-    }
-  }, [tripForm.image]);
 
   const validateForm = (): boolean => {
     const errors: { [key: string]: string } = {};
@@ -118,8 +104,12 @@ export default function TripEditClient({
         .map((item) => item.trim())
         .filter((item) => item);
 
+      // Exclude the image property as it's now managed separately through the gallery tab
+      // This prevents the edit form from overwriting the existing image data
+      const { image, ...tripFormWithoutImage } = tripForm;
+
       const updatedTrip = {
-        ...tripForm,
+        ...tripFormWithoutImage,
         participants: JSON.stringify(participants),
       };
 
@@ -189,7 +179,6 @@ export default function TripEditClient({
                 {error}
               </div>
             )}
-
             <div className="space-y-2">
               <Label htmlFor="name">Trip Name*</Label>
               <Input
@@ -203,7 +192,6 @@ export default function TripEditClient({
                 <p className="text-red-500 text-sm">{validationErrors.name}</p>
               )}
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
@@ -215,7 +203,6 @@ export default function TripEditClient({
                 rows={4}
               />
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="startDate">Start Date*</Label>
@@ -249,8 +236,7 @@ export default function TripEditClient({
                   </p>
                 )}
               </div>
-            </div>
-
+            </div>{' '}
             <div className="space-y-2">
               <Label htmlFor="participants">
                 Participants (comma-separated names)
@@ -261,31 +247,6 @@ export default function TripEditClient({
                 onChange={(e) => setParticipantsInput(e.target.value)}
                 placeholder="John, Jane, etc."
               />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="image">Image URL (optional)</Label>
-              <Input
-                id="image"
-                name="image"
-                value={tripForm.image || ''}
-                onChange={handleInputChange}
-                placeholder="https://example.com/image.jpg"
-              />
-
-              {imagePreview && (
-                <div className="mt-4">
-                  <p className="text-sm text-gray-500 mb-2">Image Preview:</p>
-                  <Image
-                    src={imagePreview}
-                    alt="Trip"
-                    width={400}
-                    height={225}
-                    className="rounded-md object-cover"
-                    onError={() => setImagePreview(null)}
-                  />
-                </div>
-              )}
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">

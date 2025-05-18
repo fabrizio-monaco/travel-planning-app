@@ -42,13 +42,13 @@ export const tripsApi = {
   }, // Update a trip
   async updateTrip(id: string, trip: Partial<Trip>): Promise<Trip> {
     // Create a clean update object
-    const updateData: any = {
-      name: trip.name,
-      description: trip.description,
-      startDate: trip.startDate,
-      endDate: trip.endDate,
-      image: trip.image,
-    };
+    const updateData: any = {}; // Only include properties that are explicitly provided
+    if (trip.name !== undefined) updateData.name = trip.name;
+    if (trip.description !== undefined)
+      updateData.description = trip.description;
+    if (trip.startDate !== undefined) updateData.startDate = trip.startDate;
+    if (trip.endDate !== undefined) updateData.endDate = trip.endDate;
+    if (trip.image !== undefined) updateData.image = trip.image;
 
     // If participants is provided, parse it from JSON string to array for the API
     if (trip.participants) {
