@@ -178,19 +178,11 @@ Start the PostgreSQL database using Docker:
 docker compose up -d
 ```
 
-Then, run the database migrations:
-
-```bash
-cd backend
-pnpm run db:generate     # Optional: generates types based on schema
-pnpm run db:migrate      # Applies the latest schema migrations
-```
-
 ---
 
 ### ⚙️ Configuration
 
-1. Copy the environment example file and create your local environment file:
+1. Copy the environment example file in `/backend` and create your local environment file:
 
 ```bash
 cp .env.example .env
@@ -220,6 +212,18 @@ pnpm install
 # Frontend
 cd ../frontend
 pnpm install
+```
+
+---
+
+### Setup Database
+
+Then, run the database migrations:
+
+```bash
+cd backend
+pnpm run db:generate     # Optional: generates types based on schema
+pnpm run db:migrate      # Applies the latest schema migrations
 ```
 
 ---
