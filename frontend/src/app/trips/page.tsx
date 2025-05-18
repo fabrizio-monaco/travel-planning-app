@@ -15,11 +15,19 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { tripsApi } from '@/services/trips-api';
-import { Trip } from '@/types';
+import { destinationsApi } from '@/services/destinations-api';
+import { Trip, Destination } from '@/types';
 import {
   DeleteConfirmationDialog,
   useDeleteConfirmation,
 } from '@/components/delete-confirmation-dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function TripsPage() {
   const router = useRouter();
@@ -27,11 +35,14 @@ export default function TripsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchDate, setSearchDate] = useState('');
+  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [selectedDestination, setSelectedDestination] = useState('all');
   const { isDialogOpen, confirmDelete, handleConfirm, handleClose } =
     useDeleteConfirmation();
 
   useEffect(() => {
     fetchTrips();
+    fetchDestinations();
   }, []);
 
   const fetchTrips = async () => {
@@ -47,7 +58,15 @@ export default function TripsPage() {
     }
   };
 
-  const handleSearch = async () => {
+  const fetchDestinations = async () => {
+    try {
+      const data = await destinationsApi.getAllDestinations();
+      setDestinations(data);
+    } catch (error) {
+      toast.error('Failed to load destinations');
+      console.error(error);
+    }
+  };  const handleSearch = async () => {
     try {
       setLoading(true);
       let startDate, endDate;
@@ -56,8 +75,15 @@ export default function TripsPage() {
         startDate = searchDate;
       }
 
-      const data = await tripsApi.searchTrips(searchQuery, startDate, endDate);
-      setTrips(data);
+      // If destination is selected, search by destination
+      if (selectedDestination && selectedDestination !== 'all') {
+        const data = await tripsApi.getTripsByDestination(selectedDestination, true);
+        setTrips(data);
+      } else {
+        // Otherwise do a regular search
+        const data = await tripsApi.searchTrips(searchQuery, startDate, endDate);
+        setTrips(data);
+      }
     } catch (error) {
       toast.error('Search failed');
       console.error(error);
@@ -85,31 +111,68 @@ export default function TripsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Your Trips</h1>
+    <div className="space-y-6">      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Your Trips</h1>          {selectedDestination && selectedDestination !== 'all' && (
+            <p className="text-sm text-gray-500 mt-1">
+              Showing trips for {destinations.find(d => d.id === selectedDestination)?.name || 'selected destination'}
+            </p>
+          )}
+        </div>
         <Button asChild>
           <Link href="/trips/new">Create New Trip</Link>
         </Button>
       </div>
 
-      <div className="flex items-center gap-4 flex-wrap">
-        <div className="flex-1 min-w-[200px]">
+      <div className="flex items-center gap-4 flex-wrap">        <div className="flex-1 min-w-[200px] space-y-1">
+          <label htmlFor="name-search" className="text-sm font-medium">
+            Trip Name
+          </label>
           <Input
+            id="name-search"
             placeholder="Search trips by name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div className="w-48">
+        <div className="w-48 space-y-1">
+          <label htmlFor="date-search" className="text-sm font-medium">
+            Start Date
+          </label>
           <Input
+            id="date-search"
             type="date"
             value={searchDate}
             onChange={(e) => setSearchDate(e.target.value)}
           />
-        </div>
-        <Button onClick={handleSearch}>Search</Button>
-        <Button variant="outline" onClick={fetchTrips}>
+        </div><div className="w-48 space-y-1">
+          <label htmlFor="destination-select" className="text-sm font-medium">
+            Destination
+          </label>
+          <Select
+            onValueChange={(value) => setSelectedDestination(value)}
+            value={selectedDestination}
+          >
+            <SelectTrigger id="destination-select">
+              <SelectValue placeholder="Select destination" />
+            </SelectTrigger>            <SelectContent>
+              <SelectItem value="all">All destinations</SelectItem>
+              {destinations.map((destination) => (
+                <SelectItem key={destination.id} value={destination.id}>
+                  {destination.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div><Button onClick={handleSearch}>Search</Button>        <Button
+          variant="outline"
+          onClick={() => {
+            setSearchQuery('');
+            setSearchDate('');
+            setSelectedDestination('all');
+            fetchTrips();
+          }}
+        >
           Reset
         </Button>
       </div>
