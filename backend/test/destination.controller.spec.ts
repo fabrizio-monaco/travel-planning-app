@@ -56,7 +56,7 @@ describe('DestinationController', () => {
     mockRequest = {
       query: {},
       params: {},
-      body: {}
+      body: {},
     };
     mockResponse = {
       status: jest.fn().mockReturnThis(),
@@ -78,8 +78,8 @@ describe('DestinationController', () => {
           updatedAt: new Date(),
           latitude: null,
           longitude: null,
-            activities: null,
-            photos: null,
+          activities: null,
+          photos: null,
         },
         {
           id: '2',
@@ -89,13 +89,15 @@ describe('DestinationController', () => {
           updatedAt: new Date(),
           latitude: null,
           longitude: null,
-            activities: null,
-            photos: null,
+          activities: null,
+          photos: null,
         },
       ];
 
       mockRequest.query = { withRelations: 'false' };
-      mockDestinationRepository.getAllDestinations.mockResolvedValue(mockDestinations);
+      mockDestinationRepository.getAllDestinations.mockResolvedValue(
+        mockDestinations,
+      );
 
       // Act
       await destinationController.getAllDestinations(
@@ -104,7 +106,9 @@ describe('DestinationController', () => {
       );
 
       // Assert
-      expect(mockDestinationRepository.getAllDestinations).toHaveBeenCalledWith(false);
+      expect(mockDestinationRepository.getAllDestinations).toHaveBeenCalledWith(
+        false,
+      );
       expect(mockResponse.send).toHaveBeenCalledWith(mockDestinations);
     });
 
@@ -130,14 +134,16 @@ describe('DestinationController', () => {
               trip: {
                 id: 'trip1',
                 name: 'Italy Trip',
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
       ];
 
       mockRequest.query = { withRelations: 'true' };
-      mockDestinationRepository.getAllDestinations.mockResolvedValue(mockDestinationsWithRelations);
+      mockDestinationRepository.getAllDestinations.mockResolvedValue(
+        mockDestinationsWithRelations,
+      );
 
       // Act
       await destinationController.getAllDestinations(
@@ -146,14 +152,20 @@ describe('DestinationController', () => {
       );
 
       // Assert
-      expect(mockDestinationRepository.getAllDestinations).toHaveBeenCalledWith(true);
-      expect(mockResponse.send).toHaveBeenCalledWith(mockDestinationsWithRelations);
+      expect(mockDestinationRepository.getAllDestinations).toHaveBeenCalledWith(
+        true,
+      );
+      expect(mockResponse.send).toHaveBeenCalledWith(
+        mockDestinationsWithRelations,
+      );
     });
 
     it('should handle errors and return 500 status', async () => {
       // Arrange
       mockRequest.query = {};
-      mockDestinationRepository.getAllDestinations.mockRejectedValue(new Error('Database error'));
+      mockDestinationRepository.getAllDestinations.mockRejectedValue(
+        new Error('Database error'),
+      );
 
       // Act
       await destinationController.getAllDestinations(
@@ -163,8 +175,8 @@ describe('DestinationController', () => {
 
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(500);
-      expect(mockResponse.json).toHaveBeenCalledWith({ 
-        errors: ['Error retrieving destinations'] 
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        errors: ['Error retrieving destinations'],
       });
     });
   });
@@ -179,14 +191,16 @@ describe('DestinationController', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         latitude: null,
-          longitude: null,
-            activities: null,
-            photos: null,
+        longitude: null,
+        activities: null,
+        photos: null,
       };
 
       mockRequest.params = { id: '550e8400-e29b-41d4-a716-446655440000' };
       mockRequest.query = { withRelations: 'false' };
-      mockDestinationRepository.getDestinationById.mockResolvedValue(mockDestination);
+      mockDestinationRepository.getDestinationById.mockResolvedValue(
+        mockDestination,
+      );
 
       // Act
       await destinationController.getDestinationById(
@@ -197,7 +211,7 @@ describe('DestinationController', () => {
       // Assert
       expect(mockDestinationRepository.getDestinationById).toHaveBeenCalledWith(
         '550e8400-e29b-41d4-a716-446655440000',
-        false
+        false,
       );
       expect(mockResponse.send).toHaveBeenCalledWith(mockDestination);
     });
@@ -216,8 +230,8 @@ describe('DestinationController', () => {
 
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(404);
-      expect(mockResponse.json).toHaveBeenCalledWith({ 
-        errors: ['Destination not found'] 
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        errors: ['Destination not found'],
       });
     });
 
@@ -235,10 +249,12 @@ describe('DestinationController', () => {
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(400);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        errors: ['Invalid destination id format. Please provide a valid UUID.']
+        errors: ['Invalid destination id format. Please provide a valid UUID.'],
       });
       // The repository shouldn't be called when UUID validation fails
-      expect(mockDestinationRepository.getDestinationById).not.toHaveBeenCalled();
+      expect(
+        mockDestinationRepository.getDestinationById,
+      ).not.toHaveBeenCalled();
     });
   });
 
@@ -257,13 +273,15 @@ describe('DestinationController', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         latitude: null,
-          longitude: null,
-            activities: null,
-            photos: null,
+        longitude: null,
+        activities: null,
+        photos: null,
       };
 
       mockRequest.body = destinationData;
-      mockDestinationRepository.createDestination.mockResolvedValue(createdDestination);
+      mockDestinationRepository.createDestination.mockResolvedValue(
+        createdDestination,
+      );
 
       // Act
       await destinationController.createDestination(
@@ -288,12 +306,11 @@ describe('DestinationController', () => {
 
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith({ 
-        errors: ['Invalid destination data'] 
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        errors: ['Invalid destination data'],
       });
     });
   });
-
   describe('getTripsForDestination', () => {
     it('should return trips for a valid destination id', async () => {
       // Arrange
@@ -315,8 +332,8 @@ describe('DestinationController', () => {
             image: null,
             createdAt: null,
             updatedAt: null,
-            participants: null
-          }
+            participants: null,
+          },
         },
         {
           tripId: 'trip2',
@@ -335,19 +352,37 @@ describe('DestinationController', () => {
             image: null,
             createdAt: null,
             updatedAt: null,
-            participants: null
-          }
-        }
+            participants: null,
+          },
+        },
       ];
 
       // The expected trips should match exactly what the controller returns
       const expectedTrips = [
         mockTripRelations[0].trip,
-        mockTripRelations[1].trip
+        mockTripRelations[1].trip,
       ];
 
+      // Mock the destination existence check
+      const mockDestination = {
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'Tokyo',
+        description: 'Capital of Japan',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        latitude: null,
+        longitude: null,
+        activities: null,
+        photos: null,
+      };
+      mockDestinationRepository.getDestinationById.mockResolvedValue(
+        mockDestination,
+      );
+
       mockRequest.params = { id: '550e8400-e29b-41d4-a716-446655440000' };
-      mockTripToDestinationRepository.getTripsForDestination.mockResolvedValue(mockTripRelations);
+      mockTripToDestinationRepository.getTripsForDestination.mockResolvedValue(
+        mockTripRelations,
+      );
 
       // Act
       await destinationController.getTripsForDestination(
@@ -356,12 +391,15 @@ describe('DestinationController', () => {
       );
 
       // Assert
-      expect(mockTripToDestinationRepository.getTripsForDestination).toHaveBeenCalledWith(
-        '550e8400-e29b-41d4-a716-446655440000'
+      expect(mockDestinationRepository.getDestinationById).toHaveBeenCalledWith(
+        '550e8400-e29b-41d4-a716-446655440000',
+        false,
       );
+      expect(
+        mockTripToDestinationRepository.getTripsForDestination,
+      ).toHaveBeenCalledWith('550e8400-e29b-41d4-a716-446655440000');
       expect(mockResponse.send).toHaveBeenCalledWith(expectedTrips);
     });
-
     it('should return 400 status with invalid destination id', async () => {
       // Arrange
       mockRequest.params = { id: 'invalid-uuid' };
@@ -375,8 +413,34 @@ describe('DestinationController', () => {
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(400);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        errors: ['Invalid destination id format. Please provide a valid UUID.']
+        errors: ['Invalid destination id format. Please provide a valid UUID.'],
       });
+    });
+
+    it('should return 404 status when destination does not exist', async () => {
+      // Arrange
+      mockRequest.params = { id: '550e8400-e29b-41d4-a716-446655440000' };
+      mockDestinationRepository.getDestinationById.mockResolvedValue(undefined);
+
+      // Act
+      await destinationController.getTripsForDestination(
+        mockRequest as Request,
+        mockResponse as Response,
+      );
+
+      // Assert
+      expect(mockDestinationRepository.getDestinationById).toHaveBeenCalledWith(
+        '550e8400-e29b-41d4-a716-446655440000',
+        false,
+      );
+      expect(mockResponse.status).toHaveBeenCalledWith(404);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        errors: ['Destination not found'],
+      });
+      // The repository shouldn't try to get trips if destination doesn't exist
+      expect(
+        mockTripToDestinationRepository.getTripsForDestination,
+      ).not.toHaveBeenCalled();
     });
   });
 });

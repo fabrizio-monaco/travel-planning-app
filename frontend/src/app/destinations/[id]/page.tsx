@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
-import { FuelStations } from '@/components/ui/fuel-stations';
+import { FuelStations } from '@/components/fuel-stations';
 import { destinationsApi } from '@/services/destinations-api';
 import { tripsApi } from '@/services/trips-api';
 import { Destination, Trip, FuelStationResponse, FuelStation } from '@/types';

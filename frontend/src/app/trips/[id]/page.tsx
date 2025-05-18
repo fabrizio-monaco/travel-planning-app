@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { FuelStations } from '@/components/ui/fuel-stations';
+import { FuelStations } from '@/components/fuel-stations';
 import { tripsApi } from '@/services/trips-api';
 import { packingItemsApi } from '@/services/packing-items-api';
 import { destinationsApi } from '@/services/destinations-api';
