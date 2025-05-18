@@ -31,7 +31,7 @@ export default function DestinationEditClient({
     initialDestinationData
   );
 
-  // Parse arrays from JSON strings
+  // Parse activities from JSON string
   const initialActivitiesInput = (() => {
     try {
       const activities = JSON.parse(initialDestinationData.activities || '[]');
@@ -42,20 +42,9 @@ export default function DestinationEditClient({
     }
   })();
 
-  const initialPhotosInput = (() => {
-    try {
-      const photos = JSON.parse(initialDestinationData.photos || '[]');
-      return Array.isArray(photos) ? photos.join('\n') : '';
-    } catch (e) {
-      console.error('Error parsing photos:', e);
-      return '';
-    }
-  })();
-
   const [activitiesInput, setActivitiesInput] = useState(
     initialActivitiesInput
   );
-  const [photosInput, setPhotosInput] = useState(initialPhotosInput);
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string;
   }>({});
@@ -116,16 +105,18 @@ export default function DestinationEditClient({
         .map((item) => item.trim())
         .filter((item) => item);
 
-      // Parse photos from line-separated values
-      const photos = photosInput
-        .split('\n')
-        .map((item) => item.trim())
-        .filter((item) => item);
+      // Get existing photos (if any) from the destination
+      let existingPhotos = [];
+      try {
+        existingPhotos = JSON.parse(initialDestinationData.photos || '[]');
+      } catch (e) {
+        console.error('Error parsing existing photos:', e);
+      }
 
       const updatedDestination = {
         ...destinationForm,
         activities: JSON.stringify(activities),
-        photos: JSON.stringify(photos),
+        photos: JSON.stringify(existingPhotos), // Preserve existing photos
       };
 
       await destinationsApi.updateDestination(
@@ -288,17 +279,6 @@ export default function DestinationEditClient({
                 value={activitiesInput}
                 onChange={(e) => setActivitiesInput(e.target.value)}
                 placeholder="e.g., Hiking, Swimming, Sightseeing"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="photos">Photo URLs (one per line)</Label>
-              <Textarea
-                id="photos"
-                value={photosInput}
-                onChange={(e) => setPhotosInput(e.target.value)}
-                placeholder="https://example.com/photo1.jpg&#10;https://example.com/photo2.jpg"
-                rows={4}
               />
             </div>
           </CardContent>

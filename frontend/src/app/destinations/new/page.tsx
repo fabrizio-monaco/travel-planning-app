@@ -24,7 +24,6 @@ export default function CreateDestinationPage() {
     name: '',
     description: '',
     activities: '',
-    photos: '',
     latitude: '',
     longitude: '',
   });
@@ -35,16 +34,11 @@ export default function CreateDestinationPage() {
     try {
       setSubmitting(true);
 
-      // Parse activities and photos from comma-separated inputs
+      // Parse activities from comma-separated inputs
       const activities = destinationForm.activities
         .split(',')
         .map((a) => a.trim())
         .filter((a) => a !== '');
-
-      const photos = destinationForm.photos
-        .split(',')
-        .map((p) => p.trim())
-        .filter((p) => p !== '');
 
       // Parse lat/lng if provided
       const latitude = destinationForm.latitude
@@ -52,12 +46,14 @@ export default function CreateDestinationPage() {
         : undefined;
       const longitude = destinationForm.longitude
         ? parseFloat(destinationForm.longitude)
-        : undefined; // Create the new destination
+        : undefined;
+
+      // Create the new destination
       const newDestination = await destinationsApi.createDestination({
         name: destinationForm.name,
         description: destinationForm.description,
         activities: JSON.stringify(activities),
-        photos: JSON.stringify(photos),
+        photos: JSON.stringify([]), // Empty array for photos
         latitude,
         longitude,
       });
@@ -123,17 +119,6 @@ export default function CreateDestinationPage() {
                 value={destinationForm.activities}
                 onChange={handleInputChange}
                 placeholder="Snorkeling, Swimming, Sunbathing"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="photos">Photo URLs (comma-separated)</Label>
-              <Input
-                id="photos"
-                name="photos"
-                value={destinationForm.photos}
-                onChange={handleInputChange}
-                placeholder="https://example.com/photo1.jpg, https://example.com/photo2.jpg"
               />
             </div>
 

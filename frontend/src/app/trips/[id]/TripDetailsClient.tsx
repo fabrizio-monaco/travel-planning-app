@@ -355,10 +355,7 @@ export default function TripDetailsClient({
                       }}
                     />
                   ) : (
-                    <div className="flex flex-col items-center p-8 bg-muted/30 rounded-md">
-                      <p className="text-muted-foreground mb-4">
-                        No images available for this trip
-                      </p>
+                    <div className="flex flex-col bg-muted/30 rounded-md">
                       <Gallery
                         imageData="[]"
                         tripName={trip.name}

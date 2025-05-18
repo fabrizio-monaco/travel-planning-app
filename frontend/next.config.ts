@@ -13,7 +13,7 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   images: {
     domains: [
-      'via.placeholder.com', // Kept for fallback placeholder images
+      'placehold.co', // Kept for fallback placeholder images
     ],
   },
 };

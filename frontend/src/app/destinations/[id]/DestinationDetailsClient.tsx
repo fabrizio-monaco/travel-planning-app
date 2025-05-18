@@ -11,6 +11,8 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Gallery } from '@/components/custom/gallery';
 import {
   FuelStations,
   FuelStationFinder,
@@ -32,7 +34,8 @@ export default function DestinationDetailsClient({
   initialAssociatedTrips,
 }: DestinationDetailsClientProps) {
   const router = useRouter();
-  const [destination] = useState<Destination>(initialDestination);
+  const [destination, setDestination] =
+    useState<Destination>(initialDestination);
   const [associatedTrips] = useState<Trip[]>(initialAssociatedTrips);
   const [fuelStations, setFuelStations] = useState<FuelStationResponse | null>(
     null
@@ -43,6 +46,27 @@ export default function DestinationDetailsClient({
     null
   );
   const deleteDialog = useDeleteConfirmation();
+
+  // Handler for image updates from the Gallery component
+  const handleImagesUpdate = async (newImageData: string) => {
+    try {
+      // Update destination with new image data
+      await destinationsApi.updateDestination(destination.id, {
+        photos: newImageData,
+      });
+
+      // Update the local state with the new image data
+      setDestination({
+        ...destination,
+        photos: newImageData,
+      });
+
+      toast.success('Gallery updated successfully');
+    } catch (error) {
+      console.error('Failed to update gallery:', error);
+      toast.error('Failed to update gallery');
+    }
+  };
 
   const handleDelete = () => {
     deleteDialog.confirmDelete(async () => {
@@ -114,112 +138,98 @@ export default function DestinationDetailsClient({
             Delete
           </Button>
         </div>
-      </div>
-
+      </div>{' '}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Destination Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-gray-700">{destination.description}</p>
+            <CardContent>
+              {' '}
+              <Tabs defaultValue="details" className="w-full">
+                <TabsList className="mb-4 w-full grid grid-cols-2">
+                  <TabsTrigger value="details">Details</TabsTrigger>
+                  <TabsTrigger value="gallery">Gallery</TabsTrigger>
+                </TabsList>
 
-              {destination.latitude && destination.longitude ? (
-                <div>
-                  <p className="text-sm text-gray-500">
-                    Coordinates: {destination.latitude}, {destination.longitude}
-                  </p>
-                </div>
-              ) : (
-                <p className="text-sm text-yellow-600">
-                  No coordinates available for this location
-                </p>
-              )}
+                <TabsContent value="details" className="space-y-4">
+                  <p className="text-gray-700">{destination.description}</p>
 
-              {destination.activities && (
-                <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">
-                    Activities
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {(() => {
-                      try {
-                        const activities = JSON.parse(
-                          destination.activities || '[]'
-                        );
-                        if (
-                          Array.isArray(activities) &&
-                          activities.length > 0
-                        ) {
-                          return activities.map((activity, index) => (
-                            <Badge key={index} variant="secondary">
-                              {activity}
-                            </Badge>
-                          ));
-                        }
-                        return (
-                          <p className="text-sm text-gray-500">
-                            No activities listed
-                          </p>
-                        );
-                      } catch (e) {
-                        return (
-                          <p className="text-sm text-red-500">
-                            Invalid activities data
-                          </p>
-                        );
-                      }
-                    })()}
-                  </div>
-                </div>
-              )}
+                  {destination.latitude && destination.longitude ? (
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Coordinates: {destination.latitude},{' '}
+                        {destination.longitude}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-yellow-600">
+                      No coordinates available for this location
+                    </p>
+                  )}
 
-              {destination.photos && (
-                <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">
-                    Photo Gallery
-                  </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {(() => {
-                      try {
-                        const photos = JSON.parse(destination.photos || '[]');
-                        if (Array.isArray(photos) && photos.length > 0) {
-                          return photos.map((photo, index) => (
-                            <div
-                              key={index}
-                              className="aspect-video relative overflow-hidden rounded-md"
-                            >
-                              <Image
-                                src={photo}
-                                alt={`${destination.name} photo ${index + 1}`}
-                                fill
-                                className="object-cover"
-                                onError={(e) => {
-                                  // Fallback for failed images
-                                  e.currentTarget.src =
-                                    'https://via.placeholder.com/300x200?text=Image+Not+Found';
-                                }}
-                              />
-                            </div>
-                          ));
-                        }
-                        return (
-                          <p className="text-sm text-gray-500 col-span-full">
-                            No photos available
-                          </p>
-                        );
-                      } catch (e) {
-                        return (
-                          <p className="text-sm text-red-500 col-span-full">
-                            Invalid photo data
-                          </p>
-                        );
-                      }
-                    })()}
-                  </div>
-                </div>
-              )}
+                  {destination.activities && (
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">
+                        Activities
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {(() => {
+                          try {
+                            const activities = JSON.parse(
+                              destination.activities || '[]'
+                            );
+                            if (
+                              Array.isArray(activities) &&
+                              activities.length > 0
+                            ) {
+                              return activities.map((activity, index) => (
+                                <Badge key={index} variant="secondary">
+                                  {activity}
+                                </Badge>
+                              ));
+                            }
+                            return (
+                              <p className="text-sm text-gray-500">
+                                No activities listed
+                              </p>
+                            );
+                          } catch (e) {
+                            return (
+                              <p className="text-sm text-red-500">
+                                Invalid activities data
+                              </p>
+                            );
+                          }
+                        })()}
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
+                <TabsContent value="gallery">
+                  {destination.photos ? (
+                    <Gallery
+                      imageData={destination.photos}
+                      tripName={destination.name}
+                      tripId={destination.id}
+                      onImagesUpdate={handleImagesUpdate}
+                      isDestination={true}
+                    />
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500 mb-4">No images available</p>
+                      <Gallery
+                        imageData="[]"
+                        tripName={destination.name}
+                        tripId={destination.id}
+                        onImagesUpdate={handleImagesUpdate}
+                        isDestination={true}
+                      />
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
 
@@ -314,7 +324,6 @@ export default function DestinationDetailsClient({
           </Card>
         </div>
       </div>
-
       {/* Delete confirmation dialog */}
       <DeleteConfirmationDialog
         isOpen={deleteDialog.isDialogOpen}
