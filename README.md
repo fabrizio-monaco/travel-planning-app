@@ -41,16 +41,34 @@ Travel Planning is a comprehensive full-stack application developed for the FWE 
 
 #### Packing Items Feature (Freestyle Task 1)
 
-- **Trip-Specific Packing Lists**: Create and manage packing lists for each trip
-- **Item Management**: Add, update amounts, and remove packing items
-- **Bulk Operations**: Clear all packing items for a specific trip
+- **Trip-Specific Packing Lists**: Create and manage comprehensive packing lists for each trip with item tracking
+- **Item Management**:
+  - Add custom items with name and quantity
+  - Update item quantities directly from the trip detail view
+  - Remove individual items
+- **Database Integration**:
+  - Items are stored in a separate database table with foreign key relationship to trips
+  - Cascading deletion when trips are removed
 
 #### Fuel Stations Feature (Freestyle Task 2)
 
-- **Nearby Fuel Stations**: Find fuel stations near a destination using geographic coordinates
-- **Station Details**: View detailed information about each fuel station
-- **Configurable Radius**: Adjust search radius to find stations at various distances
-- **Integration with Geoapify API**: Uses external API for real-time fuel station data
+- **Nearby Fuel Stations**:
+  - Dynamically discover fuel stations near any destination with geographic coordinates
+  - Display ordered by proximity (closest first)
+  - Show distance in kilometers from the destination
+- **Station Details**:
+  - Comprehensive information including station name, address, and distance
+  - Display available fuel types (diesel, unleaded, etc.) when provided by the API
+  - Show opening hours with special indication for 24/7 stations
+  - Formatted address with street, city, and postal code
+- **Configurable Radius**:
+  - Interactive slider to adjust search radius from 1km to 20km
+  - Real-time API requests as radius changes
+  - Default 5km radius for initial search
+- **Integration with Geoapify API**:
+  - Securely connects to external Geoapify Places API
+  - Error handling for failed API requests
+  - Caching mechanism to reduce redundant API calls
 
 ## 🛣️ API Routes
 
@@ -136,62 +154,96 @@ The frontend communicates with the backend API using typed service modules:
 - `destinations-api.ts`: Service for destination-related API calls
 - `packing-items-api.ts`: Service for packing item API calls
 
+Here’s an improved and more polished version of the **Setup Instructions** section. It’s clearer, better structured, and follows a logical progression with helpful notes:
+
+---
+
 ## 🚀 Setup Instructions
 
-### Prerequisites
+### 🧰 Prerequisites
 
-- Node.js (v18 or higher)
-- PostgreSQL (v14 or higher)
-- pnpm (recommended) or npm
+Ensure the following tools are installed:
 
-### Setting Up the Database
+- **[Docker](https://www.docker.com/)** – used to run the PostgreSQL database via Docker Compose
+- **[pnpm](https://pnpm.io/)** – preferred package manager (you may use npm if needed)
 
-1. Create a PostgreSQL database for the application
-2. Configure database connection in `.env` file (see example below)
+---
 
-### Installing Dependencies
+### 🗃️ Database Setup
+
+Start the PostgreSQL database using Docker:
 
 ```bash
-# Install dependencies for both backend and frontend
-pnpm install
+# From the root directory
+docker compose up -d
 ```
 
-### Configuration
+Then, run the database migrations:
 
-Create a copy of the `.env.example` file in the root directory named `.env` and fill out the fields accordingly.
-
-Make sure to fill out the Geoapify API Key which i sent you per mail.
-
+```bash
+cd backend
+pnpm run db:generate     # Optional: generates types based on schema
+pnpm run db:migrate      # Applies the latest schema migrations
 ```
+
+---
+
+### ⚙️ Configuration
+
+1. Copy the environment example file and create your local environment file:
+
+```bash
+cp .env.example .env
+```
+
+2. Update the `.env` file according to your Docker Compose setup.
+
+3. **Important**: Set your [Geoapify API key](https://www.geoapify.com/) in the `.env` file to enable the fuel station search functionality:
+
+```env
 GEOAPIFY_API_KEY=your_geoapify_api_key
 ```
 
-### Installing Dependencies
+_(The API key was sent to you via email.)_
+
+---
+
+### 📦 Installing Dependencies
+
+Install backend and frontend dependencies:
 
 ```bash
-# Install backend dependencies
+# Backend
 cd backend
 pnpm install
 
-# Install frontend dependencies
+# Frontend
 cd ../frontend
 pnpm install
 ```
 
-### Running the Application
+---
+
+### 🏃 Running the Application
+
+Start the backend and frontend in separate terminals:
 
 ```bash
-# Start backend development server
+# Terminal 1: Start backend server
 cd backend
 pnpm run dev
 ```
 
 ```bash
-# In a separate terminal, start frontend development server
+# Terminal 2: Start frontend server
 cd frontend
 pnpm run dev
 ```
 
+With this setup, the application should now be running locally at:
+
+- **Frontend**: [http://localhost:3000](http://localhost:3000)
+- **Backend**: [http://localhost:5001](http://localhost:5001) (or as configured)
 
 ## 🧪 Testing the API
 
@@ -229,7 +281,7 @@ A Postman collection is included in the repository:
 
 - **Framework**: React, Next.js (App Router)
 - **Languages**: TypeScript
-- **UI Components**: shadcn/ui
+- **UI Components**: shadcn/ui, radix-ui
 - **State Management**: React hooks
 - **Styling**: Tailwind CSS
 
