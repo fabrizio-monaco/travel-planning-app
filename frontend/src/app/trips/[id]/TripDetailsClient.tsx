@@ -211,9 +211,18 @@ export default function TripDetailsClient({
       setLoadingFuelStations((prev) => ({ ...prev, [destinationId]: true }));
       setFuelStationsError((prev) => ({ ...prev, [destinationId]: '' }));
 
+      // Find destination object to get latitude and longitude
+      const destination = trip.tripToDestinations?.find(
+        (td) => td.destinationId === destinationId
+      )?.destination;
+
+      if (!destination?.latitude || !destination?.longitude) {
+        throw new Error('Missing destination coordinates');
+      }
+
       const response = await destinationsApi.getFuelStations(
-        destinationId,
-        radius
+        radius,
+        destinationId
       );
 
       // Update fuel stations for this destination

@@ -11,13 +11,16 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
-import { FuelStations } from '@/components/fuel-stations';
+import {
+  FuelStations,
+  FuelStationFinder,
+} from '@/components/custom/fuel-stations';
 import { destinationsApi } from '@/services/destinations-api';
 import { Destination, Trip, FuelStationResponse, FuelStation } from '@/types';
 import {
   DeleteConfirmationDialog,
   useDeleteConfirmation,
-} from '@/components/delete-confirmation-dialog';
+} from '@/components/custom/delete-confirmation-dialog';
 
 interface DestinationDetailsClientProps {
   initialDestination: Destination;
@@ -65,8 +68,8 @@ export default function DestinationDetailsClient({
       setFuelStationsError(null);
 
       const response = await destinationsApi.getFuelStations(
-        destination.id,
-        radius
+        radius,
+        destination.id
       );
 
       setFuelStations(response);
