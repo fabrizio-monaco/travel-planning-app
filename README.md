@@ -1,93 +1,242 @@
-# FWESS251117739
+# FWE-SS-25-1117739
 
+# Travel Planning Application
 
+## 🌟 Project Overview
 
-## Getting started
+Travel Planning is a comprehensive full-stack application developed for the FWE | SS 2025 course. It enables users to plan and organize their trips by managing destinations, keeping track of packing lists, and finding nearby fuel stations for their travel destinations. The application consists of a backend REST API built with Node.js, Express, and PostgreSQL, and a responsive frontend developed with React, Next.js, and TypeScript.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- Find fuel stations near destinations
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## ✨ Features
 
-## Add your files
+### Core Features
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+#### Trip Management
+
+- **CRUD Operations**: Create, read, update, and delete trips
+- **Search Functionality**: Search trips by name or date range
+- **Trip Details**: View comprehensive information about each trip including destinations, dates, and participants
+
+#### Destination Management
+
+- **CRUD Operations**: Create, read, update, and delete destinations
+- **Detailed Information**: Store location information, activities, and photos
+- **Geolocation Support**: Store latitude/longitude coordinates for destinations
+
+#### Relationship Management
+
+- **Trip-Destination Relationships**: Each trip can have 0..N destinations, and each destination can belong to 1..N trips
+- **Add/Remove Destinations**: Add destinations to trips or remove them with custom date ranges
+- **Related Trips View**: View all trips that include a specific destination
+
+#### Frontend Integration
+
+- **List/Detail Views**: Comprehensive views for trips and destinations
+- **Search & Filter**: Advanced search capabilities in the frontend
+- **Responsive Design**: Mobile-friendly interface
+- **Interactive Forms**: User-friendly forms for creating and editing trips/destinations
+
+### Freestyle Features
+
+#### Packing Items Feature (Freestyle Task 1)
+
+- **Trip-Specific Packing Lists**: Create and manage packing lists for each trip
+- **Item Management**: Add, update amounts, and remove packing items
+- **Bulk Operations**: Clear all packing items for a specific trip
+
+#### Fuel Stations Feature (Freestyle Task 2)
+
+- **Nearby Fuel Stations**: Find fuel stations near a destination using geographic coordinates
+- **Station Details**: View detailed information about each fuel station
+- **Configurable Radius**: Adjust search radius to find stations at various distances
+- **Integration with Geoapify API**: Uses external API for real-time fuel station data
+
+## 🛣️ API Routes
+
+### Trip Routes
+
+| Method   | URL                                        | Description               | Request Body                 | Response              |
+| -------- | ------------------------------------------ | ------------------------- | ---------------------------- | --------------------- |
+| `GET`    | `/api/trips`                               | Get all trips             | -                            | Array of trip objects |
+| `GET`    | `/api/trips/:id`                           | Get a specific trip       | -                            | Trip object           |
+| `POST`   | `/api/trips`                               | Create a new trip         | Trip data                    | Created trip          |
+| `PUT`    | `/api/trips/:id`                           | Update a trip             | Trip data                    | Updated trip          |
+| `DELETE` | `/api/trips/:id`                           | Delete a trip             | -                            | Success message       |
+| `GET`    | `/api/trips/search`                        | Search trips by name/date | `?name=&startDate=&endDate=` | Array of trip objects |
+| `GET`    | `/api/trips/by-destination/:destinationId` | Get trips by destination  | -                            | Array of trip objects |
+
+### Trip-Destination Relationship Routes
+
+| Method   | URL                                              | Description                  | Request Body   | Response             |
+| -------- | ------------------------------------------------ | ---------------------------- | -------------- | -------------------- |
+| `POST`   | `/api/trips/:tripId/destinations/:destinationId` | Add destination to trip      | Optional dates | Relationship object  |
+| `PUT`    | `/api/trips/:tripId/destinations/:destinationId` | Update trip-destination      | Dates          | Updated relationship |
+| `DELETE` | `/api/trips/:tripId/destinations/:destinationId` | Remove destination from trip | -              | Success message      |
+
+### Destination Routes
+
+| Method   | URL                           | Description                 | Request Body     | Response                     |
+| -------- | ----------------------------- | --------------------------- | ---------------- | ---------------------------- |
+| `GET`    | `/api/destinations`           | Get all destinations        | -                | Array of destination objects |
+| `GET`    | `/api/destinations/:id`       | Get a specific destination  | -                | Destination object           |
+| `POST`   | `/api/destinations`           | Create a destination        | Destination data | Created destination          |
+| `PUT`    | `/api/destinations/:id`       | Update a destination        | Destination data | Updated destination          |
+| `DELETE` | `/api/destinations/:id`       | Delete a destination        | -                | Success message              |
+| `GET`    | `/api/destinations/:id/trips` | Get trips for a destination | -                | Array of trip objects        |
+
+### Packing Item Routes
+
+| Method   | URL                                | Description                         | Request Body | Response               |
+| -------- | ---------------------------------- | ----------------------------------- | ------------ | ---------------------- |
+| `GET`    | `/api/packing-items`               | Get all packing items               | -            | Array of packing items |
+| `POST`   | `/api/packing-items`               | Create a packing item               | Item data    | Created packing item   |
+| `GET`    | `/api/packing-items/:id`           | Get a specific packing item         | -            | Packing item object    |
+| `PUT`    | `/api/packing-items/:id`           | Update a packing item               | Item data    | Updated packing item   |
+| `DELETE` | `/api/packing-items/:id`           | Delete a packing item               | -            | Success message        |
+| `GET`    | `/api/trips/:tripId/packing-items` | Get packing items for a trip        | -            | Array of packing items |
+| `DELETE` | `/api/trips/:tripId/packing-items` | Delete all packing items for a trip | -            | Success message        |
+
+### Fuel Station Routes
+
+| Method | URL                                              | Description                          | Query Params   | Response                      |
+| ------ | ------------------------------------------------ | ------------------------------------ | -------------- | ----------------------------- |
+| `GET`  | `/api/destinations/:destinationId/fuel-stations` | Get fuel stations near a destination | `?radius=5000` | Array of fuel station objects |
+
+## 🏗️ Frontend Structure
+
+The frontend is built with Next.js (App Router) and organized as follows:
+
+### Main Pages
+
+- **Trip List Page (`/trips`)**: Displays all trips with search/filter capabilities
+- **Trip Details Page (`/trips/:id`)**: Shows detailed information about a specific trip
+- **Trip Creation Page (`/trips/new`)**: Form to create a new trip
+- **Trip Edit Page (`/trips/:id/edit`)**: Form to edit an existing trip
+- **Destination List Page (`/destinations`)**: Displays all destinations
+- **Destination Details Page (`/destinations/:id`)**: Shows detailed information about a specific destination
+- **Destination Creation Page (`/destinations/new`)**: Form to create a new destination
+- **Destination Edit Page (`/destinations/:id/edit`)**: Form to edit an existing destination
+
+### Key Components
+
+- **Navbar**: Navigation bar for the application
+- **Trip Card**: Display summary information for a trip
+- **Destination Card**: Display summary information for a destination
+- **Packing Item List**: Manage packing items for a trip
+- **Fuel Stations**: Display and manage fuel stations near a destination
+- **Forms**: Reusable forms for creating/editing trips and destinations
+- **Delete Confirmation Dialog**: Confirmation dialog for delete operations
+
+### Backend Integration
+
+The frontend communicates with the backend API using typed service modules:
+
+- `trips-api.ts`: Service for trip-related API calls
+- `destinations-api.ts`: Service for destination-related API calls
+- `packing-items-api.ts`: Service for packing item API calls
+
+## 🚀 Setup Instructions
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- PostgreSQL (v14 or higher)
+- pnpm (recommended) or npm
+
+### Setting Up the Database
+
+1. Create a PostgreSQL database for the application
+2. Configure database connection in `.env` file (see example below)
+
+### Installing Dependencies
+
+```bash
+# Install dependencies for both backend and frontend
+pnpm install
+```
+
+### Configuration
+
+Create a copy of the `.env.example` file in the root directory named `.env` and fill out the fields accordingly.
+
+Make sure to fill out the Geoapify API Key which i sent you per mail.
 
 ```
-cd existing_repo
-git remote add origin https://code.fbi.h-da.de/stfamonac/fwe-ss-25-1117739.git
-git branch -M main
-git push -uf origin main
+GEOAPIFY_API_KEY=your_geoapify_api_key
 ```
 
-## Integrate with your tools
+### Installing Dependencies
 
-- [ ] [Set up project integrations](https://code.fbi.h-da.de/stfamonac/fwe-ss-25-1117739/-/settings/integrations)
+```bash
+# Install backend dependencies
+cd backend
+pnpm install
 
-## Collaborate with your team
+# Install frontend dependencies
+cd ../frontend
+pnpm install
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### Running the Application
 
-## Test and Deploy
+```bash
+# Start backend development server
+cd backend
+pnpm run dev
+```
 
-Use the built-in continuous integration in GitLab.
+```bash
+# In a separate terminal, start frontend development server
+cd frontend
+pnpm run dev
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
 
-***
+## 🧪 Testing the API
 
-# Editing this README
+### Automated Tests
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+The project includes Jest tests for the backend API:
 
-## Suggestions for a good README
+```bash
+# Run all tests
+pnpm test
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+# Run tests with coverage
+pnpm test:coverage
+```
 
-## Name
-Choose a self-explaining name for your project.
+### Postman Collection
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+A Postman collection is included in the repository:
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+- Location: `/backend/postman_collection.json`
+- Import this file into Postman to test all API endpoints
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## 💻 Tech Stack
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### Backend
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+- **Framework**: Node.js, Express
+- **Database**: PostgreSQL
+- **ORM**: Drizzle ORM
+- **Testing**: Jest
+- **Validation**: Zod
+- **External APIs**: Geoapify (for fuel stations data)
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### Frontend
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+- **Framework**: React, Next.js (App Router)
+- **Languages**: TypeScript
+- **UI Components**: shadcn/ui
+- **State Management**: React hooks
+- **Styling**: Tailwind CSS
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+## 🚧 Future Improvements
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- User authentication and authorization
+- Photo upload capability for destinations
+- Interactive maps for destinations
+- Trip sharing functionality
+- Mobile app version
