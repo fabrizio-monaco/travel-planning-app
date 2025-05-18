@@ -21,6 +21,13 @@ import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Table,
   TableBody,
   TableCell,
@@ -53,9 +60,10 @@ export default function TripDetailsClient({
   const [trip, setTrip] = useState<Trip>(initialTripData);
   const [packingItems, setPackingItems] =
     useState<PackingItem[]>(initialPackingItems);
-  const [selectedDestination, setSelectedDestination] = useState('');
+  const [selectedDestination, setSelectedDestination] = useState('select');
   const [destinationStartDate, setDestinationStartDate] = useState('');
   const [destinationEndDate, setDestinationEndDate] = useState('');
+  const [destinationDialogOpen, setDestinationDialogOpen] = useState(false);
   const [newPackingItem, setNewPackingItem] = useState({ name: '', amount: 1 });
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editingAmount, setEditingAmount] = useState<number>(1);
@@ -88,9 +96,12 @@ export default function TripDetailsClient({
       return initialRadiusSettings;
     }
   );
-
   const handleAddDestination = async () => {
-    if (!selectedDestination || !destinationStartDate || !destinationEndDate) {
+    if (
+      selectedDestination === 'select' ||
+      !destinationStartDate ||
+      !destinationEndDate
+    ) {
       toast.error('Please fill out all fields');
       return;
     }
@@ -106,7 +117,7 @@ export default function TripDetailsClient({
       const updatedTrip = await tripsApi.getTripById(trip.id, true);
       setTrip(updatedTrip);
 
-      setSelectedDestination('');
+      setSelectedDestination('select');
       setDestinationStartDate('');
       setDestinationEndDate('');
     } catch (error) {
@@ -403,8 +414,11 @@ export default function TripDetailsClient({
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Destinations</CardTitle>
-              <Dialog>
+              <CardTitle>Destinations</CardTitle>{' '}
+              <Dialog
+                open={destinationDialogOpen}
+                onOpenChange={setDestinationDialogOpen}
+              >
                 <DialogTrigger asChild>
                   <Button size="sm">Add Destination</Button>
                 </DialogTrigger>
@@ -413,26 +427,35 @@ export default function TripDetailsClient({
                     <DialogTitle>Add Destination to Trip</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
+                    {' '}
                     <div>
                       <label
                         htmlFor="destination-select"
-                        className="block text-sm font-medium text-gray-700 mb-1"
+                        className="block text-sm font-medium mb-1"
                       >
                         Select Destination
                       </label>
-                      <select
-                        id="destination-select"
-                        className="w-full p-2 border rounded-md"
+                      <Select
                         value={selectedDestination}
-                        onChange={(e) => setSelectedDestination(e.target.value)}
+                        onValueChange={setSelectedDestination}
                       >
-                        <option value="">Select a destination</option>
-                        {filteredDestinations.map((dest) => (
-                          <option key={dest.id} value={dest.id}>
-                            {dest.name}
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger
+                          id="destination-select"
+                          className="w-full"
+                        >
+                          <SelectValue placeholder="Select a destination" />
+                        </SelectTrigger>{' '}
+                        <SelectContent>
+                          <SelectItem value="select">
+                            Select a destination
+                          </SelectItem>
+                          {filteredDestinations.map((dest) => (
+                            <SelectItem key={dest.id} value={dest.id}>
+                              {dest.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <label

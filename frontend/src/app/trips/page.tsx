@@ -27,7 +27,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
 export default function TripsPage() {
   const router = useRouter();
@@ -66,7 +66,8 @@ export default function TripsPage() {
       toast.error('Failed to load destinations');
       console.error(error);
     }
-  };  const handleSearch = async () => {
+  };
+  const handleSearch = async () => {
     try {
       setLoading(true);
       let startDate, endDate;
@@ -77,11 +78,18 @@ export default function TripsPage() {
 
       // If destination is selected, search by destination
       if (selectedDestination && selectedDestination !== 'all') {
-        const data = await tripsApi.getTripsByDestination(selectedDestination, true);
+        const data = await tripsApi.getTripsByDestination(
+          selectedDestination,
+          true
+        );
         setTrips(data);
       } else {
         // Otherwise do a regular search
-        const data = await tripsApi.searchTrips(searchQuery, startDate, endDate);
+        const data = await tripsApi.searchTrips(
+          searchQuery,
+          startDate,
+          endDate
+        );
         setTrips(data);
       }
     } catch (error) {
@@ -111,11 +119,16 @@ export default function TripsPage() {
   };
 
   return (
-    <div className="space-y-6">      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      {' '}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Your Trips</h1>          {selectedDestination && selectedDestination !== 'all' && (
+          <h1 className="text-2xl font-bold">Your Trips</h1>{' '}
+          {selectedDestination && selectedDestination !== 'all' && (
             <p className="text-sm text-gray-500 mt-1">
-              Showing trips for {destinations.find(d => d.id === selectedDestination)?.name || 'selected destination'}
+              Showing trips for{' '}
+              {destinations.find((d) => d.id === selectedDestination)?.name ||
+                'selected destination'}
             </p>
           )}
         </div>
@@ -123,8 +136,9 @@ export default function TripsPage() {
           <Link href="/trips/new">Create New Trip</Link>
         </Button>
       </div>
-
-      <div className="flex items-center gap-4 flex-wrap">        <div className="flex-1 min-w-[200px] space-y-1">
+      <div className="flex items-center gap-4 flex-wrap">
+        {' '}
+        <div className="flex-1 min-w-[200px] space-y-1">
           <label htmlFor="name-search" className="text-sm font-medium">
             Trip Name
           </label>
@@ -145,7 +159,8 @@ export default function TripsPage() {
             value={searchDate}
             onChange={(e) => setSearchDate(e.target.value)}
           />
-        </div><div className="w-48 space-y-1">
+        </div>
+        <div className="w-48 space-y-1">
           <label htmlFor="destination-select" className="text-sm font-medium">
             Destination
           </label>
@@ -155,7 +170,8 @@ export default function TripsPage() {
           >
             <SelectTrigger id="destination-select">
               <SelectValue placeholder="Select destination" />
-            </SelectTrigger>            <SelectContent>
+            </SelectTrigger>{' '}
+            <SelectContent>
               <SelectItem value="all">All destinations</SelectItem>
               {destinations.map((destination) => (
                 <SelectItem key={destination.id} value={destination.id}>
@@ -164,7 +180,9 @@ export default function TripsPage() {
               ))}
             </SelectContent>
           </Select>
-        </div><Button onClick={handleSearch}>Search</Button>        <Button
+        </div>
+        <Button onClick={handleSearch}>Search</Button>{' '}
+        <Button
           variant="outline"
           onClick={() => {
             setSearchQuery('');
@@ -176,7 +194,6 @@ export default function TripsPage() {
           Reset
         </Button>
       </div>
-
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
@@ -247,7 +264,6 @@ export default function TripsPage() {
           ))}{' '}
         </div>
       )}
-
       <DeleteConfirmationDialog
         isOpen={isDialogOpen}
         onClose={handleClose}
