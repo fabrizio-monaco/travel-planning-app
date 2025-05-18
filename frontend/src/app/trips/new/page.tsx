@@ -25,7 +25,6 @@ export default function CreateTripPage() {
     description: '',
     startDate: '',
     endDate: '',
-    image: '',
     participants: '',
   });
   const handleSubmit = async (e: FormEvent) => {
@@ -49,7 +48,6 @@ export default function CreateTripPage() {
         description: tripForm.description,
         startDate: tripForm.startDate,
         endDate: tripForm.endDate,
-        image: tripForm.image || undefined,
         participants,
       });
 
@@ -131,17 +129,6 @@ export default function CreateTripPage() {
                   required
                 />
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="image">Image URL (optional)</Label>
-              <Input
-                id="image"
-                name="image"
-                value={tripForm.image}
-                onChange={handleInputChange}
-                placeholder="https://example.com/image.jpg"
-              />
             </div>
 
             <div className="space-y-2">
