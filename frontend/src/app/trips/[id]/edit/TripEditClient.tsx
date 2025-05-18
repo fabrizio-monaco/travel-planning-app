@@ -23,33 +23,43 @@ interface TripEditClientProps {
   initialTripData: Trip;
 }
 
-export default function TripEditClient({ initialTripData }: TripEditClientProps) {
+export default function TripEditClient({
+  initialTripData,
+}: TripEditClientProps) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(initialTripData.image || null);
-  
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    initialTripData.image || null
+  );
+
   // Format dates for input fields
   const formattedTrip = {
     ...initialTripData,
     startDate: initialTripData.startDate.split('T')[0],
     endDate: initialTripData.endDate.split('T')[0],
   };
-  
+
   const [tripForm, setTripForm] = useState<Partial<Trip>>(formattedTrip);
-  
+
   // Parse the participants from the JSON string and join as comma-separated
   const initialParticipantsInput = (() => {
     try {
-      const parsedParticipants = JSON.parse(initialTripData.participants || '[]');
-      return Array.isArray(parsedParticipants) ? parsedParticipants.join(', ') : '';
+      const parsedParticipants = JSON.parse(
+        initialTripData.participants || '[]'
+      );
+      return Array.isArray(parsedParticipants)
+        ? parsedParticipants.join(', ')
+        : '';
     } catch (e) {
       console.error('Error parsing participants:', e);
       return '';
     }
   })();
-  
-  const [participantsInput, setParticipantsInput] = useState(initialParticipantsInput);
+
+  const [participantsInput, setParticipantsInput] = useState(
+    initialParticipantsInput
+  );
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string;
   }>({});
@@ -93,7 +103,7 @@ export default function TripEditClient({ initialTripData }: TripEditClientProps)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }

@@ -22,13 +22,15 @@ interface DestinationEditClientProps {
   initialDestinationData: Destination;
 }
 
-export default function DestinationEditClient({ 
-  initialDestinationData 
+export default function DestinationEditClient({
+  initialDestinationData,
 }: DestinationEditClientProps) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
-  const [destinationForm, setDestinationForm] = useState<Partial<Destination>>(initialDestinationData);
-  
+  const [destinationForm, setDestinationForm] = useState<Partial<Destination>>(
+    initialDestinationData
+  );
+
   // Parse arrays from JSON strings
   const initialActivitiesInput = (() => {
     try {
@@ -39,7 +41,7 @@ export default function DestinationEditClient({
       return '';
     }
   })();
-  
+
   const initialPhotosInput = (() => {
     try {
       const photos = JSON.parse(initialDestinationData.photos || '[]');
@@ -49,8 +51,10 @@ export default function DestinationEditClient({
       return '';
     }
   })();
-  
-  const [activitiesInput, setActivitiesInput] = useState(initialActivitiesInput);
+
+  const [activitiesInput, setActivitiesInput] = useState(
+    initialActivitiesInput
+  );
   const [photosInput, setPhotosInput] = useState(initialPhotosInput);
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string;
@@ -98,7 +102,7 @@ export default function DestinationEditClient({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -128,7 +132,7 @@ export default function DestinationEditClient({
         initialDestinationData.id,
         updatedDestination
       );
-      
+
       toast.success('Destination updated successfully');
       router.push(`/destinations/${initialDestinationData.id}`);
     } catch (error) {
@@ -288,9 +292,7 @@ export default function DestinationEditClient({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="photos">
-                Photo URLs (one per line)
-              </Label>
+              <Label htmlFor="photos">Photo URLs (one per line)</Label>
               <Textarea
                 id="photos"
                 value={photosInput}
@@ -302,7 +304,9 @@ export default function DestinationEditClient({
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" asChild>
-              <Link href={`/destinations/${initialDestinationData.id}`}>Cancel</Link>
+              <Link href={`/destinations/${initialDestinationData.id}`}>
+                Cancel
+              </Link>
             </Button>
             <Button type="submit" disabled={submitting}>
               {submitting ? 'Updating...' : 'Update Destination'}

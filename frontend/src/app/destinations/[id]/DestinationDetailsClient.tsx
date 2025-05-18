@@ -24,7 +24,7 @@ interface DestinationDetailsClientProps {
   initialAssociatedTrips: Trip[];
 }
 
-export default function DestinationDetailsClient({ 
+export default function DestinationDetailsClient({
   initialDestination,
   initialAssociatedTrips,
 }: DestinationDetailsClientProps) {
@@ -40,7 +40,7 @@ export default function DestinationDetailsClient({
     null
   );
   const deleteDialog = useDeleteConfirmation();
-  
+
   const handleDelete = () => {
     deleteDialog.confirmDelete(async () => {
       try {
@@ -68,11 +68,13 @@ export default function DestinationDetailsClient({
         destination.id,
         radius
       );
-      
+
       setFuelStations(response);
 
       if (response.data && response.data.length === 0) {
-        setFuelStationsError(`No fuel stations found within ${radius / 1000} km`);
+        setFuelStationsError(
+          `No fuel stations found within ${radius / 1000} km`
+        );
       }
     } catch (err: any) {
       const errorMessage =
@@ -87,7 +89,7 @@ export default function DestinationDetailsClient({
       setLoadingFuelStations(false);
     }
   };
-  
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
   };
@@ -263,11 +265,13 @@ export default function DestinationDetailsClient({
                   </div>
                 )}
 
-                {!fuelStations && !fuelStationsError && !loadingFuelStations && (
-                  <p className="text-center text-gray-500 py-8">
-                    Click the search button to find nearby fuel stations
-                  </p>
-                )}
+                {!fuelStations &&
+                  !fuelStationsError &&
+                  !loadingFuelStations && (
+                    <p className="text-center text-gray-500 py-8">
+                      Click the search button to find nearby fuel stations
+                    </p>
+                  )}
               </CardContent>
             </Card>
           )}
