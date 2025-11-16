@@ -1,5 +1,30 @@
 services:
-  fwe-trip-db:
+  fwe-travel-planning-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api
+    ports:
+      - 3000:3000
+    depends_on:
+      - fwe-travel-planning-backend
+  fwe-travel-planning-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+    - ./backend/.env
+    ports:
+      - 4000:4000
+    depends_on:
+      fwe-travel-planning-db:
+        condition: service_healthy
+
+  fwe-travel-planning-db:
     image: postgres:18
     restart: always
     environment:
@@ -17,5 +42,5 @@ services:
       - fwe-trip-db-data:/var/lib/postgresql
 
 volumes:
-  fwe-trip-db-data:
+  fwe-travel-planning-db-data:
     driver: local
