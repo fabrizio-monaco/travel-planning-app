@@ -39,7 +39,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - fwe-trip-db-data:/var/lib/postgresql
+      - fwe-travel-planning-db-data:/var/lib/postgresql
 
 volumes:
   fwe-travel-planning-db-data:
