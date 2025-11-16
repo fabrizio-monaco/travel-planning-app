@@ -2,6 +2,11 @@
 
 # Travel Planning Application
 
+<div align="center">
+  <img src="assets/mainpage.png" alt="Travel Planning Application - Main Page" width="100%" max-width="800px" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
+  <p><em>Travel Planning Application Interface</em></p>
+</div>
+
 ## 🌟 Project Overview
 
 Travel Planning is a comprehensive full-stack application developed for the FWE | SS 2025 course. It enables users to plan and organize their trips by managing destinations, keeping track of packing lists, and finding nearby fuel stations for their travel destinations. The application consists of a backend REST API built with Node.js, Express, and PostgreSQL, and a responsive frontend developed with React, Next.js, and TypeScript.
