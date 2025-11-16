@@ -115,8 +115,8 @@ export const destinationsApi = {
 
   // Get fuel stations for a destination
   async getFuelStations(
-    radius: number,
-    destinationId: string
+    destinationId: string,
+    radius: number
   ): Promise<FuelStationResponse> {
     const response = await fetch(
       `${BASE_URL}/destinations/${destinationId}/fuel-stations?radius=${radius}`

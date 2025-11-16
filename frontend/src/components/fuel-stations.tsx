@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FuelStation, Destination, FuelStationResponse } from '@/types';
 import { Button } from '@/components/ui/button';
 import {
@@ -96,13 +96,7 @@ export function FuelStationSearch({
   const [searchRadius, setSearchRadius] = useState(initialRadius);
   const [fuelStations, setFuelStations] = useState<FuelStation[]>([]);
 
-  useEffect(() => {
-    if (destination?.id && destination?.latitude && destination?.longitude) {
-      fetchFuelStations();
-    }
-  }, [destination?.id, searchRadius]);
-
-  const fetchFuelStations = async () => {
+  const fetchFuelStations = useCallback(async () => {
     if (!destination?.latitude || !destination?.longitude) {
       return;
     }
@@ -127,7 +121,13 @@ export function FuelStationSearch({
     } finally {
       setLoading(false);
     }
-  };
+  }, [destination?.id, destination?.latitude, destination?.longitude, searchRadius]);
+
+  useEffect(() => {
+    if (destination?.id && destination?.latitude && destination?.longitude) {
+      fetchFuelStations();
+    }
+  }, [destination?.id, destination?.latitude, destination?.longitude, fetchFuelStations]);
 
   const handleRadiusChange = (value: number[]) => {
     setRadius(value[0]);

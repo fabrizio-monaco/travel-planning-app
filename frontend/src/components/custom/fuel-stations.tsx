@@ -125,7 +125,7 @@ export function FuelStationFinder({ destination }: FuelStationFinderProps) {
 
       try {
         const response: FuelStationResponse =
-          await destinationsApi.getFuelStations(radius, destination.id);
+          await destinationsApi.getFuelStations(destination.id, radius);
         setStations(response.data);
       } catch (err) {
         console.error('Error fetching fuel stations:', err);
@@ -144,7 +144,7 @@ export function FuelStationFinder({ destination }: FuelStationFinderProps) {
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>No location data</AlertTitle>
         <AlertDescription>
-          This destination doesn't have location data. Add coordinates to find
+          This destination doesn&apos;t have location data. Add coordinates to find
           nearby fuel stations.
         </AlertDescription>
       </Alert>

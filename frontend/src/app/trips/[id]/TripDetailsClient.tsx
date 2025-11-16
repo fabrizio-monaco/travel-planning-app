@@ -234,8 +234,8 @@ export default function TripDetailsClient({
       }
 
       const response = await destinationsApi.getFuelStations(
-        radius,
-        destinationId
+        destinationId,
+        radius
       );
 
       // Update fuel stations for this destination

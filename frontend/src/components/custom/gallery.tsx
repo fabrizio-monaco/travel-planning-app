@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image'; // Note: Standard <img> is used in the provided code for gallery items
+import Image from 'next/image';
 import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -580,28 +580,29 @@ export function Gallery({
                       <div className="h-8 w-8 rounded-full border-4 border-t-transparent border-blue-600 animate-spin"></div>
                     </div>
                   )}
-                  {/* Using <img> tag as in the original. If Next.js Image component is desired for optimization, 
-                  it would require width/height or fill, and domain whitelisting.
-                */}
                   {failedImages[image] ? (
-                    <img
-                      src={'https://placehold.co/400x225/333/CCC?text=Error'} // Consistent placeholder
+                    <Image
+                      src={'https://placehold.co/400x225/333/CCC?text=Error'}
                       alt={`Failed to load image ${index + 1}`}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      unoptimized
                     />
                   ) : (
-                    <img
+                    <Image
                       src={image}
                       alt={`Gallery image ${index + 1} for ${tripName}`}
-                      className="w-full h-full object-cover transition-opacity duration-300"
+                      fill
+                      className="object-cover transition-opacity duration-300"
                       style={{
                         opacity:
                           loadingImages[image] && !failedImages[image]
                             ? 0.7
                             : 1,
-                      }} // More precise opacity
+                      }}
                       onLoad={() => handleImageLoaded(image)}
                       onError={() => handleImageError(image)}
+                      unoptimized
                     />
                   )}
                 </div>
@@ -727,18 +728,22 @@ export function Gallery({
                   <div className="h-12 w-12 rounded-full border-4 border-t-transparent border-gray-300 dark:border-gray-600 animate-spin"></div>
                 </div>
               )}
-              <img
-                src={
-                  modalImageFailed
-                    ? 'https://placehold.co/800x600/111/FFF?text=Error%20Displaying%20Image'
-                    : selectedImage
-                }
-                alt={`${tripName} photo fullscreen preview`}
-                className="max-h-full max-w-full object-contain"
-                style={{ display: modalImageLoading ? 'none' : 'block' }}
-                onLoad={handleModalImageLoaded}
-                onError={handleModalImageError}
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src={
+                    modalImageFailed
+                      ? 'https://placehold.co/800x600/111/FFF?text=Error%20Displaying%20Image'
+                      : selectedImage
+                  }
+                  alt={`${tripName} photo fullscreen preview`}
+                  fill
+                  className="object-contain"
+                  style={{ display: modalImageLoading ? 'none' : 'block' }}
+                  onLoad={handleModalImageLoaded}
+                  onError={handleModalImageError}
+                  unoptimized
+                />
+              </div>
               {modalImageFailed && !modalImageLoading && (
                 <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-600 text-white p-3 text-sm rounded-md shadow-lg text-center flex items-center justify-center gap-2">
                   <AlertTriangle className="h-5 w-5" />

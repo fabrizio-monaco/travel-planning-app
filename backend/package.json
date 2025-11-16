@@ -1,10 +1,11 @@
 {
-  "name": "diary-demo-project",
-  "version": "1.0.1",
+  "name": "travel-planning-backend",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "build": "tsc",
+    "start": "cross-env NODE_ENV=production tsx src/index.ts",
     "dev": "cross-env NODE_ENV=dev tsx watch src/index.ts",
     "test": "jest",
     "test:watch": "jest --watch",

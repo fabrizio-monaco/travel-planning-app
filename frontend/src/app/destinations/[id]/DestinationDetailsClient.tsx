@@ -92,8 +92,8 @@ export default function DestinationDetailsClient({
       setFuelStationsError(null);
 
       const response = await destinationsApi.getFuelStations(
-        radius,
-        destination.id
+        destination.id,
+        radius
       );
 
       setFuelStations(response);

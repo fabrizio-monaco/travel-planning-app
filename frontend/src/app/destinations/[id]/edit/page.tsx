@@ -5,24 +5,24 @@ import DestinationEditClient from './DestinationEditClient';
 export default async function EditDestinationPage({
   params,
 }: {
-  params: Promise<{ id: string }> | { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  // Correctly unwrap params if it's a promise
-  const resolvedParams = params instanceof Promise ? await params : params;
-  const { id } = resolvedParams;
+  const { id } = await params;
+  
+  // Fetch destination data
+  let destinationData;
   
   try {
-    // Fetch destination data
-    const destinationData = await destinationsApi.getDestinationById(id);
-
-    if (!destinationData) {
-      notFound();
-    }
-
-    // Render the client component with initial data
-    return <DestinationEditClient initialDestinationData={destinationData} />;
+    destinationData = await destinationsApi.getDestinationById(id);
   } catch (error) {
     console.error('Failed to load destination data for editing:', error);
     notFound();
   }
+
+  if (!destinationData) {
+    notFound();
+  }
+
+  // Render the client component with initial data
+  return <DestinationEditClient initialDestinationData={destinationData} />;
 }
