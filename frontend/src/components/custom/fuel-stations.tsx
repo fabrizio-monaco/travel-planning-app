@@ -144,8 +144,8 @@ export function FuelStationFinder({ destination }: FuelStationFinderProps) {
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>No location data</AlertTitle>
         <AlertDescription>
-          This destination doesn&apos;t have location data. Add coordinates to find
-          nearby fuel stations.
+          This destination doesn&apos;t have location data. Add coordinates to
+          find nearby fuel stations.
         </AlertDescription>
       </Alert>
     );

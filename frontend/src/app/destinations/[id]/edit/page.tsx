@@ -8,10 +8,10 @@ export default async function EditDestinationPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  
+
   // Fetch destination data
   let destinationData;
-  
+
   try {
     destinationData = await destinationsApi.getDestinationById(id);
   } catch (error) {

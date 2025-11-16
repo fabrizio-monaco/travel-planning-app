@@ -11,7 +11,7 @@ export default async function EditTripPage({
 
   // Fetch trip data
   let tripData;
-  
+
   try {
     tripData = await tripsApi.getTripById(id);
   } catch (error) {

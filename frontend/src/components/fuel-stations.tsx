@@ -121,13 +121,23 @@ export function FuelStationSearch({
     } finally {
       setLoading(false);
     }
-  }, [destination?.id, destination?.latitude, destination?.longitude, searchRadius]);
+  }, [
+    destination?.id,
+    destination?.latitude,
+    destination?.longitude,
+    searchRadius,
+  ]);
 
   useEffect(() => {
     if (destination?.id && destination?.latitude && destination?.longitude) {
       fetchFuelStations();
     }
-  }, [destination?.id, destination?.latitude, destination?.longitude, fetchFuelStations]);
+  }, [
+    destination?.id,
+    destination?.latitude,
+    destination?.longitude,
+    fetchFuelStations,
+  ]);
 
   const handleRadiusChange = (value: number[]) => {
     setRadius(value[0]);

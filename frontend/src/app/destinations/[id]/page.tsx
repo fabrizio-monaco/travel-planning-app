@@ -12,7 +12,7 @@ export default async function DestinationDetailsPage({
 
   // Fetch data in parallel for better performance
   let destinationData, associatedTripsData;
-  
+
   try {
     [destinationData, associatedTripsData] = await Promise.all([
       destinationsApi.getDestinationById(id),

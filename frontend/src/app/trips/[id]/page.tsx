@@ -14,7 +14,7 @@ export default async function TripDetailsPage({
 
   // Fetch initial data in parallel for better performance
   let tripData, packingItemsData, allDestinations;
-  
+
   try {
     [tripData, packingItemsData, allDestinations] = await Promise.all([
       tripsApi.getTripById(id, true),
