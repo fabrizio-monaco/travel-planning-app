@@ -1,5 +1,3 @@
-# FWE-SS-25-1117739
-
 # Travel Planning Application
 
 <div align="center">
